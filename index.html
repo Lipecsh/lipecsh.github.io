@@ -373,16 +373,20 @@
       <label>Data</label>
       <input type="date" id="data">
     </div>
+  
     <div class="field">
-      <label>Vendedor(a)</label>
-      <input type="text" id="vendedor" placeholder="Nome">
+      <label>Cliente</label>
+      <input type="text" id="cliente" placeholder="Nome do cliente">
     </div>
-  </div>
-
-  <div class="field">
-    <label>Cliente / Empresa</label>
-    <input type="text" id="cliente" placeholder="Nome do cliente">
-  </div>
+  
+    <div class="field">
+      <label>Empresa</label>
+      <select id="empresa">
+        <option value="">Nenhuma</option>
+        <option value="Vital">Vital</option>
+        <option value="DFR">DFR</option>
+      </select>
+    </div>
 
   <p class="section-label">Status de Pagamento</p>
   <div class="payment-toggle">
@@ -804,7 +808,7 @@ function registrarVenda() {
   const cliente = document.getElementById('cliente').value.trim();
   const data = document.getElementById('data').value;
   const pagamento = document.getElementById('pagamento').value;
-  const vendedor = document.getElementById('vendedor').value.trim();
+  const empresa = document.getElementById('empresa').value;
   const obs = document.getElementById('obs').value.trim();
 
   if (!cliente) { showToast('⚠️ Informe o nome do cliente'); return; }
@@ -824,8 +828,8 @@ function registrarVenda() {
 
   const payload = {
     data,
-    vendedor,
     cliente,
+    empresa,
     itens: itensList.join(', '),
     total: total.toFixed(2),
     pagamento,
