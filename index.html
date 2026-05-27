@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Donna Clô — Registrar Venda</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap');
@@ -20,7 +20,12 @@
     --border: rgba(122, 62, 16, 0.18);
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    overflow-x: hidden;
+    width: 100%;
+  }
 
   body {
     font-family: 'DM Sans', sans-serif;
@@ -28,6 +33,9 @@
     color: var(--brown-dark);
     min-height: 100vh;
     padding-bottom: 120px;
+    overflow-x: hidden;
+    width: 100%;
+    -webkit-text-size-adjust: 100%;
   }
 
   header {
@@ -37,6 +45,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
+    width: 100%;
   }
 
   header h1 {
@@ -54,7 +63,12 @@
     margin-top: 2px;
   }
 
-  .container { max-width: 560px; margin: 0 auto; padding: 20px 16px; }
+  .container {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 20px 16px;
+    width: 100%;
+  }
 
   .section-label {
     font-size: 10px;
@@ -63,6 +77,7 @@
     text-transform: uppercase;
     color: var(--brown-light);
     margin: 24px 0 10px;
+    display: block;
   }
 
   .field {
@@ -70,6 +85,7 @@
     flex-direction: column;
     gap: 5px;
     margin-bottom: 14px;
+    width: 100%;
   }
 
   .field label {
@@ -78,7 +94,7 @@
     font-weight: 500;
   }
 
-  .field input, .field select {
+  .field input {
     background: var(--warm-white);
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -89,13 +105,40 @@
     outline: none;
     transition: border-color 0.15s;
     width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
   }
 
-  .field input:focus, .field select:focus {
+  .field input:focus { border-color: var(--brown-light); }
+
+  /* Empresa toggle buttons */
+  .empresa-toggle {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .emp-btn {
+    flex: 1;
+    padding: 11px 8px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--warm-white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--gray-soft);
+    transition: all 0.15s;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .emp-btn.selected {
+    background: #F6ECDE;
     border-color: var(--brown-light);
+    color: var(--brown-mid);
   }
-
-  .fields-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
   /* Category headers */
   .cat-header {
@@ -108,6 +151,8 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     margin: 18px 0 8px;
+    width: 100%;
+    display: block;
   }
 
   /* Product row */
@@ -121,6 +166,8 @@
     justify-content: space-between;
     margin-bottom: 8px;
     transition: border-color 0.15s;
+    width: 100%;
+    gap: 10px;
   }
 
   .product-row.active {
@@ -128,7 +175,10 @@
     background: #FFFAF4;
   }
 
-  .product-info { flex: 1; min-width: 0; }
+  .product-info {
+    flex: 1;
+    min-width: 0;
+  }
 
   .product-name {
     font-size: 14px;
@@ -148,7 +198,6 @@
   .qty-control {
     display: flex;
     align-items: center;
-    gap: 0;
     background: var(--cream);
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -157,11 +206,11 @@
   }
 
   .qty-btn {
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
     border: none;
     background: transparent;
-    font-size: 18px;
+    font-size: 20px;
     color: var(--brown-mid);
     cursor: pointer;
     display: flex;
@@ -170,12 +219,14 @@
     transition: background 0.1s;
     font-family: 'DM Sans', sans-serif;
     font-weight: 300;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
-  .qty-btn:active { background: rgba(122,62,16,0.1); }
+  .qty-btn:active { background: rgba(122,62,16,0.12); }
 
   .qty-display {
-    min-width: 28px;
+    min-width: 30px;
     text-align: center;
     font-size: 14px;
     font-weight: 500;
@@ -190,11 +241,13 @@
     right: 0;
     background: var(--brown-dark);
     padding: 14px 20px;
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     z-index: 200;
+    width: 100%;
   }
 
   .total-label {
@@ -216,13 +269,15 @@
     color: white;
     border: none;
     border-radius: 10px;
-    padding: 12px 22px;
+    padding: 12px 20px;
     font-family: 'DM Sans', sans-serif;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     transition: background 0.15s;
     white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   .btn-submit:hover { background: var(--brown-mid); }
@@ -232,11 +287,12 @@
   .payment-toggle {
     display: flex;
     gap: 8px;
+    width: 100%;
   }
 
   .pay-btn {
     flex: 1;
-    padding: 10px;
+    padding: 11px;
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--warm-white);
@@ -246,6 +302,7 @@
     cursor: pointer;
     transition: all 0.15s;
     color: var(--gray-soft);
+    -webkit-tap-highlight-color: transparent;
   }
 
   .pay-btn.selected-pago {
@@ -277,7 +334,7 @@
     transition: opacity 0.2s, transform 0.2s;
     z-index: 999;
     white-space: nowrap;
-    max-width: 90vw;
+    max-width: 88vw;
     text-align: center;
   }
 
@@ -299,43 +356,17 @@
     resize: vertical;
     min-height: 70px;
     transition: border-color 0.15s;
+    -webkit-appearance: none;
   }
 
   .obs-field textarea:focus { border-color: var(--brown-light); }
 
   .items-summary {
-    font-size: 12px;
-    color: var(--brown-mid);
+    font-size: 11px;
+    color: rgba(232,201,154,0.5);
     margin-top: 2px;
-    min-height: 16px;
-  }
-
-  /* Vendedor select */
-  .seller-dots {
-    display: flex;
-    gap: 8px;
-  }
-  .seller-btn {
-    flex: 1;
-    padding: 9px 6px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: var(--warm-white);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    color: var(--gray-soft);
-    transition: all 0.15s;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .seller-btn.selected {
-    background: #F6ECDE;
-    border-color: var(--brown-light);
-    color: var(--brown-mid);
+    min-height: 14px;
+    line-height: 1.3;
   }
 
   .clear-btn {
@@ -351,8 +382,17 @@
     cursor: pointer;
     margin-top: 10px;
     transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
   }
+
   .clear-btn:hover { border-color: var(--red-warn); color: var(--red-warn); }
+
+  /* Date input on iOS fix */
+  input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 44px;
+  }
 </style>
 </head>
 <body>
@@ -368,30 +408,27 @@
 
   <p class="section-label">Informações do Pedido</p>
 
-  <div class="card">
-    <h2>Dados da Venda</h2>
-    
-    <div class="field">
-      <label>Data</label>
-      <input type="date" id="data">
-    </div>
-
-    <div class="field">
-      <label>Cliente</label>
-      <input type="text" id="cliente" placeholder="Nome do cliente">
-    </div>
-
-    <div class="field">
-      <label>Empresa</label>
-      <select id="empresa">
-        <option value="">Nenhuma</option>
-        <option value="Vital">Vital</option>
-        <option value="DFR">DFR</option>
-      </select>
-    </div>
+  <div class="field">
+    <label>Data</label>
+    <input type="date" id="data">
   </div>
 
-  <p class="section-label">Status de Pagamento</p>
+  <div class="field">
+    <label>Cliente</label>
+    <input type="text" id="cliente" placeholder="Nome do cliente" autocomplete="off">
+  </div>
+
+  <div class="field">
+    <label>Empresa</label>
+    <div class="empresa-toggle">
+      <button class="emp-btn" id="emp-vital" onclick="selectEmpresa('Vital')">Vital</button>
+      <button class="emp-btn" id="emp-dfr"   onclick="selectEmpresa('DFR')">DFR</button>
+      <button class="emp-btn selected" id="emp-none" onclick="selectEmpresa('')">Nenhuma</button>
+    </div>
+    <input type="hidden" id="empresa" value="">
+  </div>
+
+  <p class="section-label">Pagamento</p>
   <div class="payment-toggle">
     <button class="pay-btn selected-pago" id="btn-pago" onclick="selectPayment('Pago')">✓ Pago</button>
     <button class="pay-btn" id="btn-pendente" onclick="selectPayment('Pendente')">⏳ Pendente</button>
@@ -438,6 +475,18 @@
     </div>
   </div>
 
+  <div class="product-row" id="row-bombolacha">
+    <div class="product-info">
+      <div class="product-name">Bombolacha</div>
+      <div class="product-price">R$ 8,00 / un.</div>
+    </div>
+    <div class="qty-control">
+      <button class="qty-btn" onclick="changeQty('bombolacha',-1)">−</button>
+      <span class="qty-display" id="qty-bombolacha">0</span>
+      <button class="qty-btn" onclick="changeQty('bombolacha',1)">+</button>
+    </div>
+  </div>
+
   <div class="product-row" id="row-biscoito_amendoim">
     <div class="product-info">
       <div class="product-name">Biscoito de Amendoim</div>
@@ -450,7 +499,7 @@
     </div>
   </div>
 
-  <div class="cat-header">🎂 Bolos no Pote (pedaço)</div>
+  <div class="cat-header">🎂 Bolos no Pote (pedaço — R$ 15,00)</div>
 
   <div class="product-row" id="row-bb">
     <div class="product-info">
@@ -612,7 +661,7 @@
 
   <div class="product-row" id="row-morangoffee">
     <div class="product-info">
-      <div class="product-name">Morangoffee (pote)</div>
+      <div class="product-name">Morangoffee</div>
       <div class="product-price">R$ 18,00 / un.</div>
     </div>
     <div class="qty-control">
@@ -695,48 +744,46 @@
 
 </div>
 
-<!-- Fixed bottom bar -->
 <div class="total-bar">
-  <div>
+  <div style="min-width:0;flex:1;overflow:hidden;">
     <div class="total-label">Total</div>
     <div class="total-value" id="total-display">R$ 0,00</div>
-    <div class="items-summary" id="items-summary" style="color:rgba(232,201,154,0.5);font-size:11px;"></div>
+    <div class="items-summary" id="items-summary"></div>
   </div>
-  <button class="btn-submit" onclick="registrarVenda()">Registrar venda →</button>
+  <button class="btn-submit" onclick="registrarVenda()">Registrar →</button>
 </div>
 
 <script>
-// ─── CATALOG ───────────────────────────────────────────────────────────────
 const PRODUCTS = {
-  alfajor:            { name: 'Alfajor',                   price: 9   },
-  pao_mel:            { name: 'Pão de Mel',                price: 11  },
-  queijadinha:        { name: 'Queijadinha',               price: 8   },
-  biscoito_amendoim:  { name: 'Biscoito de Amendoim',      price: 10  },
-  bb:                 { name: 'BB (Brigadeiro Belga)',      price: 15  },
-  ln:                 { name: 'LN (Leite Ninho)',           price: 15  },
-  beij:               { name: 'Beijinho',                  price: 15  },
-  bem_casado:         { name: 'Bem Casado',                price: 15  },
-  prestigio:          { name: 'Prestígio',                 price: 15  },
-  amendoim_crocante:  { name: 'Amendoim Crocante',         price: 15  },
-  dois_amores:        { name: 'Dois Amores',               price: 15  },
-  maracuja:           { name: 'Maracujá',                  price: 15  },
-  limao:              { name: 'Limão',                     price: 15  },
-  cenoura_bb:         { name: 'Cenoura c/ Brig. Belga',    price: 15  },
-  ln_geleia:          { name: 'LN c/ Geleia Morango',      price: 15  },
-  morango_pote:       { name: 'Morango (pote)',             price: 18  },
-  abacaxi_coco:       { name: 'Abacaxi c/ Coco (pote)',    price: 18  },
-  morangoffee:        { name: 'Morangoffee',               price: 18  },
-  banoffee_pote:      { name: 'Banoffee (pote)',           price: 18  },
-  bolo_sem_fruta:     { name: 'Bolo (sem frutas)',         price: 72  },
-  bolo_com_fruta:     { name: 'Bolo (com frutas)',         price: 82  },
-  torta_limao:        { name: 'Torta de Limão',            price: 78  },
-  torta_banoffee:     { name: 'Torta Banoffee',            price: 78  },
+  alfajor:           { name: 'Alfajor',                  price: 9  },
+  pao_mel:           { name: 'Pão de Mel',               price: 11 },
+  queijadinha:       { name: 'Queijadinha',              price: 8  },
+  bombolacha:        { name: 'Bombolacha',               price: 8  },
+  biscoito_amendoim: { name: 'Biscoito de Amendoim',     price: 10 },
+  bb:                { name: 'BB (Brigadeiro Belga)',    price: 15 },
+  ln:                { name: 'LN (Leite Ninho)',         price: 15 },
+  beij:              { name: 'Beijinho',                 price: 15 },
+  bem_casado:        { name: 'Bem Casado',               price: 15 },
+  prestigio:         { name: 'Prestígio',                price: 15 },
+  amendoim_crocante: { name: 'Amendoim Crocante',        price: 15 },
+  dois_amores:       { name: 'Dois Amores',              price: 15 },
+  maracuja:          { name: 'Maracujá',                 price: 15 },
+  limao:             { name: 'Limão',                    price: 15 },
+  cenoura_bb:        { name: 'Cenoura c/ Brig. Belga',  price: 15 },
+  ln_geleia:         { name: 'LN c/ Geleia Morango',    price: 15 },
+  morango_pote:      { name: 'Morango (pote)',            price: 18 },
+  abacaxi_coco:      { name: 'Abacaxi c/ Coco (pote)',  price: 18 },
+  morangoffee:       { name: 'Morangoffee',              price: 18 },
+  banoffee_pote:     { name: 'Banoffee (pote)',          price: 18 },
+  bolo_sem_fruta:    { name: 'Bolo (sem frutas)',        price: 72 },
+  bolo_com_fruta:    { name: 'Bolo (com frutas)',        price: 82 },
+  torta_limao:       { name: 'Torta de Limão',           price: 78 },
+  torta_banoffee:    { name: 'Torta Banoffee',           price: 78 },
 };
 
 const qtys = {};
 for (const k in PRODUCTS) qtys[k] = 0;
 
-// ─── SET TODAY'S DATE ──────────────────────────────────────────────────────
 window.onload = () => {
   const hoje = new Date();
   const y = hoje.getFullYear();
@@ -745,57 +792,52 @@ window.onload = () => {
   document.getElementById('data').value = `${y}-${m}-${d}`;
 };
 
-// ─── QTY CONTROL ──────────────────────────────────────────────────────────
 function changeQty(id, delta) {
   qtys[id] = Math.max(0, qtys[id] + delta);
-  document.getElementById(`qty-${id}`).textContent = qtys[id];
-  const row = document.getElementById(`row-${id}`);
-  row.classList.toggle('active', qtys[id] > 0);
+  document.getElementById('qty-'+id).textContent = qtys[id];
+  document.getElementById('row-'+id).classList.toggle('active', qtys[id] > 0);
   updateTotal();
 }
 
-// ─── TOTAL ────────────────────────────────────────────────────────────────
 function updateTotal() {
-  let total = 0;
-  let count = 0;
-  let summaryParts = [];
+  let total = 0, parts = [];
   for (const k in PRODUCTS) {
     if (qtys[k] > 0) {
       total += qtys[k] * PRODUCTS[k].price;
-      count += qtys[k];
-      summaryParts.push(`${qtys[k]}× ${PRODUCTS[k].name.split('(')[0].trim()}`);
+      parts.push(qtys[k]+'× '+PRODUCTS[k].name.split('(')[0].trim());
     }
   }
-  document.getElementById('total-display').textContent =
-    'R$ ' + total.toFixed(2).replace('.', ',');
-  document.getElementById('items-summary').textContent =
-    count > 0 ? summaryParts.join(' · ') : '';
+  document.getElementById('total-display').textContent = 'R$ '+total.toFixed(2).replace('.',',');
+  document.getElementById('items-summary').textContent = parts.join(' · ');
 }
 
-// ─── PAYMENT ──────────────────────────────────────────────────────────────
 function selectPayment(val) {
   document.getElementById('pagamento').value = val;
-  const btnPago = document.getElementById('btn-pago');
-  const btnPend = document.getElementById('btn-pendente');
-  btnPago.className = 'pay-btn' + (val === 'Pago' ? ' selected-pago' : '');
-  btnPend.className = 'pay-btn' + (val === 'Pendente' ? ' selected-pendente' : '');
+  document.getElementById('btn-pago').className   = 'pay-btn'+(val==='Pago'     ? ' selected-pago'     : '');
+  document.getElementById('btn-pendente').className = 'pay-btn'+(val==='Pendente' ? ' selected-pendente' : '');
 }
 
-// ─── CLEAR ────────────────────────────────────────────────────────────────
+function selectEmpresa(val) {
+  document.getElementById('empresa').value = val;
+  document.getElementById('emp-vital').classList.toggle('selected', val==='Vital');
+  document.getElementById('emp-dfr').classList.toggle('selected', val==='DFR');
+  document.getElementById('emp-none').classList.toggle('selected', val==='');
+}
+
 function limparTudo() {
   for (const k in qtys) {
     qtys[k] = 0;
-    document.getElementById(`qty-${k}`).textContent = '0';
-    document.getElementById(`row-${k}`).classList.remove('active');
+    document.getElementById('qty-'+k).textContent = '0';
+    document.getElementById('row-'+k).classList.remove('active');
   }
   document.getElementById('cliente').value = '';
   document.getElementById('obs').value = '';
   selectPayment('Pago');
+  selectEmpresa('');
   updateTotal();
   showToast('Formulário limpo ✓');
 }
 
-// ─── TOAST ────────────────────────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -803,63 +845,39 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-// ─── SUBMIT ───────────────────────────────────────────────────────────────
-// ⚠️ Substitua SCRIPT_URL pela URL do seu Google Apps Script Web App
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw2_OAiGD-NKTEsE_hLs8hvaWAm6Hf9OBGwxv4Lu9OUi4THEwZFg3j16cT7PrTG9NnvRA/exec';
 
 function registrarVenda() {
-  const cliente = document.getElementById('cliente').value.trim();
-  const data = document.getElementById('data').value;
-  const pagamento = document.getElementById('pagamento').value;
-  const empresa = document.getElementById('empresa').value;
-  const obs = document.getElementById('obs').value.trim();
+  const cliente  = document.getElementById('cliente').value.trim();
+  const data     = document.getElementById('data').value;
+  const pagamento= document.getElementById('pagamento').value;
+  const empresa  = document.getElementById('empresa').value;
+  const obs      = document.getElementById('obs').value.trim();
 
   if (!cliente) { showToast('⚠️ Informe o nome do cliente'); return; }
   if (!data)    { showToast('⚠️ Informe a data'); return; }
 
-  // Build items list
   const itensList = [];
   let total = 0;
   for (const k in PRODUCTS) {
     if (qtys[k] > 0) {
-      itensList.push(`${qtys[k]}x ${PRODUCTS[k].name}`);
+      itensList.push(qtys[k]+'x '+PRODUCTS[k].name);
       total += qtys[k] * PRODUCTS[k].price;
     }
   }
-
   if (itensList.length === 0) { showToast('⚠️ Adicione pelo menos 1 produto'); return; }
 
-  const payload = {
-    data,
-    cliente,
-    empresa,
-    itens: itensList.join(', '),
-    total: total.toFixed(2),
-    pagamento,
-    obs
-  };
-
-  // Build detail columns for each product (quantity)
-  for (const k in PRODUCTS) {
-    payload[`qty_${k}`] = qtys[k];
-  }
+  const payload = { data, cliente, empresa, itens: itensList.join(', '), total: total.toFixed(2), pagamento, obs };
+  for (const k in PRODUCTS) payload['qty_'+k] = qtys[k];
 
   showToast('Enviando...');
-
   fetch(SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
+    method: 'POST', mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   })
-  .then(() => {
-    showToast('✓ Venda registrada com sucesso!');
-    limparTudo();
-  })
-  .catch(err => {
-    console.error(err);
-    showToast('⚠️ Erro ao enviar. Verifique a conexão.');
-  });
+  .then(() => { showToast('✓ Venda registrada!'); limparTudo(); })
+  .catch(() => showToast('⚠️ Erro ao enviar. Verifique a conexão.'));
 }
 </script>
 </body>
