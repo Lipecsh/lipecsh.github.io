@@ -240,14 +240,16 @@
   }
   .btn-buscar:active { background: var(--brown-mid); transform: scale(0.97); }
   .btn-limpar-busca {
+    flex: 1;
     background: transparent; color: var(--gray-soft); border: 1px solid var(--border);
     border-radius: 10px; padding: 11px 14px;
     font-family: 'DM Sans', sans-serif; font-size: 14px;
-    cursor: pointer; white-space: nowrap;
+    cursor: pointer; white-space: nowrap; text-align: center;
     -webkit-tap-highlight-color: transparent;
     transition: all 0.15s;
   }
   .btn-limpar-busca:active { border-color: var(--red-warn); color: var(--red-warn); }
+  .search-btns { display: flex; gap: 8px; margin-top: 8px; }
   .search-hint {
     font-size: 12px; color: var(--gray-soft); margin-top: 10px; line-height: 1.4;
   }
@@ -304,14 +306,20 @@
   }
   .history-item:last-child { border-bottom: none; }
   .hist-date {
-    font-size: 12px; color: var(--gray-soft); min-width: 68px; padding-top: 1px;
+    font-size: 11px; color: var(--gray-soft);
+    min-width: 58px; max-width: 58px;
+    padding-top: 2px; line-height: 1.3;
+    flex-shrink: 0;
   }
   .hist-body { flex: 1; min-width: 0; }
   .hist-itens {
     font-size: 13px; color: var(--brown-dark); font-weight: 500;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    line-height: 1.4;
+    /* allow wrapping so all products show */
+    word-break: break-word;
+    white-space: normal;
   }
-  .hist-empresa { font-size: 11px; color: var(--gray-soft); margin-top: 2px; }
+  .hist-empresa { font-size: 11px; color: var(--gray-soft); margin-top: 3px; }
   .hist-right { text-align: right; flex-shrink: 0; }
   .hist-total { font-size: 14px; font-weight: 500; color: var(--brown-dark); }
   .badge {
@@ -483,7 +491,9 @@
              placeholder="Digite o nome do cliente"
              autocomplete="off"
              onkeydown="if(event.key==='Enter') buscarCliente()">
-      <button class="btn-buscar" onclick="buscarCliente()">🔍 Buscar</button>
+    </div>
+    <div class="search-btns">
+      <button class="btn-buscar" onclick="buscarCliente()" style="flex:2;">🔍 Buscar</button>
       <button class="btn-limpar-busca" onclick="limparBusca()">Limpar</button>
     </div>
     <p class="search-hint">Mostra as últimas compras, separa pagamentos pagos e pendentes e calcula o total comprado, pago e em aberto.</p>
@@ -508,7 +518,7 @@
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Última Compra</div>
-      <div class="kpi-value" id="kpi-ultima" style="font-size:18px;">—</div>
+      <div class="kpi-value" id="kpi-ultima" style="font-size:16px;line-height:1.2;">—</div>
       <div class="kpi-sub" id="kpi-ultima-sub">Sem consulta</div>
     </div>
   </div>
@@ -551,7 +561,7 @@
 
 <script>
 // ── CONFIG ──────────────────────────────────────────────
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzAI9KKnGhM_bPqeAIW74zoCfYWJRqEO3lsw9bMO97GCxA2EG3rKjsGpGanmzqOYRmM_A/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyt0VreGRh8SiGm3uS_43Yb0WOHbJfPoObdCd9IxmozghuGYlv8InVsp2UeTu0N6G_ZBg/exec';
 
 // ── PRODUCTS ────────────────────────────────────────────
 const PRODUCTS = {
@@ -669,12 +679,25 @@ function fmt(val) {
 }
 function fmtDate(raw) {
   if (!raw) return '—';
-  // raw can be "2025-02-16" or "16/02/2025"
-  if (raw.includes('-')) {
-    const [y,m,d] = raw.split('-');
+  const s = String(raw).trim();
+  // Already "dd/MM/yyyy" from Apps Script Utilities.formatDate → return as-is
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return s;
+  // "yyyy-MM-dd" (input date field)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+    const [y,m,d] = s.split('-');
     return `${d}/${m}/${y}`;
   }
-  return raw;
+  // Fallback: try to parse anything else as a Date
+  try {
+    const dt = new Date(s);
+    if (!isNaN(dt)) {
+      const dd = String(dt.getUTCDate()).padStart(2,'0');
+      const mm = String(dt.getUTCMonth()+1).padStart(2,'0');
+      const yy = dt.getUTCFullYear();
+      return `${dd}/${mm}/${yy}`;
+    }
+  } catch(e) {}
+  return s; // last resort: show raw
 }
 
 function buscarCliente() {
