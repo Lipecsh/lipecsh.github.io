@@ -4,13 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Donna Clô</title>
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 
   <meta name="apple-mobile-web-app-capable" content="yes">
 
   <meta name="apple-mobile-web-app-title" content="Donna Clô">
 
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap');
 
@@ -373,6 +375,65 @@
   }
   .clear-btn:hover { border-color: var(--red-warn); color: var(--red-warn); }
 
+
+  .empresa-outro-wrap {
+    margin-top: 10px;
+  }
+  .empresa-outro-wrap input {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--brown-dark);
+    outline: none;
+    width: 100%;
+    -webkit-appearance: none;
+    transition: border-color 0.15s;
+  }
+  .empresa-outro-wrap input:focus { border-color: var(--brown-light); }
+
+  .client-suggestion-wrap {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  .client-suggestion-title {
+    font-size: 12px;
+    color: var(--brown-mid);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .client-suggestion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .client-suggestion-btn {
+    width: 100%;
+    text-align: left;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--brown-dark);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .client-suggestion-btn:active {
+    border-color: var(--brown-light);
+    background: #F6ECDE;
+  }
+  .client-suggestion-meta {
+    font-size: 11px;
+    color: var(--gray-soft);
+    margin-top: 2px;
+  }
+
   /* ── TOAST ───────────────────────────────────────────── */
   .toast {
     position: fixed; top: 80px; left: 50%;
@@ -403,6 +464,7 @@
 </header>
 
 <div class="toast" id="toast"></div>
+<datalist id="clientes-list"></datalist>
 
 <!-- ═══════════════════════════════════════════════════════
      PAGE: VENDA
@@ -419,7 +481,7 @@
 
   <div class="field">
     <label>Cliente</label>
-    <input type="text" id="cliente" placeholder="Nome do cliente" autocomplete="off">
+    <input type="text" id="cliente" placeholder="Nome do cliente" autocomplete="off" list="clientes-list">
   </div>
 
   <div class="field">
@@ -427,9 +489,13 @@
     <div class="empresa-toggle">
       <button class="emp-btn"          id="emp-vital" onclick="selectEmpresa('Vital')">Vital</button>
       <button class="emp-btn"          id="emp-dfr"   onclick="selectEmpresa('DFR')">DFR</button>
-      <button class="emp-btn selected" id="emp-none"  onclick="selectEmpresa('')">Nenhuma</button>
+      <button class="emp-btn selected" id="emp-outro" onclick="selectEmpresa('Outro')">Outro</button>
     </div>
-    <input type="hidden" id="empresa" value="">
+    <input type="hidden" id="empresa" value="Outro">
+    <div class="field empresa-outro-wrap" id="empresa-outro-wrap" style="display:none;">
+      <label>Nome da empresa</label>
+      <input type="text" id="empresa-outro" placeholder="Digite o nome da empresa" autocomplete="off">
+    </div>
   </div>
 
   <p class="section-label">Pagamento</p>
@@ -497,6 +563,7 @@
       <input type="text" class="search-input" id="busca-nome"
              placeholder="Digite o nome do cliente"
              autocomplete="off"
+             list="clientes-list"
              onkeydown="if(event.key==='Enter') buscarCliente()">
     </div>
     <div class="search-btns">
@@ -505,6 +572,8 @@
     </div>
     <p class="search-hint">Mostra as últimas compras, separa pagamentos pagos e pendentes e calcula o total comprado, pago e em aberto.</p>
   </div>
+
+  <div id="cliente-suggestions" style="display:none; margin-bottom:16px;"></div>
 
   <!-- KPI CARDS -->
   <div class="kpi-grid">
@@ -568,7 +637,7 @@
 
 <script>
 // ── CONFIG ──────────────────────────────────────────────
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyt0VreGRh8SiGm3uS_43Yb0WOHbJfPoObdCd9IxmozghuGYlv8InVsp2UeTu0N6G_ZBg/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzf8d0qAEw1i-y1MuiwNwKBFi0SKHyyGKMVhUZBHLvFiIu3aUJdBorhVOy8cFXjVcyh/exec';
 
 // ── PRODUCTS ────────────────────────────────────────────
 const PRODUCTS = {
@@ -600,11 +669,15 @@ const PRODUCTS = {
 const qtys = {};
 for (const k in PRODUCTS) qtys[k] = 0;
 
+let allClientes = [];
+
 // ── INIT ────────────────────────────────────────────────
 window.onload = () => {
   const hoje = new Date();
   document.getElementById('data').value =
     `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}-${String(hoje.getDate()).padStart(2,'0')}`;
+  selectEmpresa('Outro');
+  loadClientes();
 };
 
 // ── TABS ────────────────────────────────────────────────
@@ -642,8 +715,13 @@ function selectPayment(val) {
 function selectEmpresa(val) {
   document.getElementById('empresa').value = val;
   document.getElementById('emp-vital').classList.toggle('selected', val==='Vital');
-  document.getElementById('emp-dfr').classList.toggle('selected',   val==='DFR');
-  document.getElementById('emp-none').classList.toggle('selected',  val==='');
+  document.getElementById('emp-dfr').classList.toggle('selected', val==='DFR');
+  document.getElementById('emp-outro').classList.toggle('selected', val==='Outro');
+  const outroWrap = document.getElementById('empresa-outro-wrap');
+  outroWrap.style.display = val === 'Outro' ? '' : 'none';
+  if (val !== 'Outro') {
+    document.getElementById('empresa-outro').value = '';
+  }
 }
 function limparTudo() {
   for (const k in qtys) {
@@ -653,18 +731,28 @@ function limparTudo() {
   }
   document.getElementById('cliente').value = '';
   document.getElementById('obs').value = '';
+  document.getElementById('empresa-outro').value = '';
   selectPayment('Pago');
+  selectEmpresa('Outro');
   updateTotal();
   showToast('Formulário limpo ✓');
 }
+
 function registrarVenda() {
   const cliente   = document.getElementById('cliente').value.trim();
   const data      = document.getElementById('data').value;
   const pagamento = document.getElementById('pagamento').value;
-  const empresa   = document.getElementById('empresa').value;
+  let empresa     = document.getElementById('empresa').value;
   const obs       = document.getElementById('obs').value.trim();
   if (!cliente) { showToast('⚠️ Informe o nome do cliente'); return; }
   if (!data)    { showToast('⚠️ Informe a data'); return; }
+  if (empresa === 'Outro') {
+    empresa = document.getElementById('empresa-outro').value.trim();
+    if (!empresa) {
+      showToast('⚠️ Informe o nome da empresa');
+      return;
+    }
+  }
   const itensList = [];
   let total = 0;
   for (const k in PRODUCTS) {
@@ -687,14 +775,11 @@ function fmt(val) {
 function fmtDate(raw) {
   if (!raw) return '—';
   const s = String(raw).trim();
-  // Already "dd/MM/yyyy" from Apps Script Utilities.formatDate → return as-is
   if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return s;
-  // "yyyy-MM-dd" (input date field)
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
     const [y,m,d] = s.split('-');
     return `${d}/${m}/${y}`;
   }
-  // Fallback: try to parse anything else as a Date
   try {
     const dt = new Date(s);
     if (!isNaN(dt)) {
@@ -704,14 +789,109 @@ function fmtDate(raw) {
       return `${dd}/${mm}/${yy}`;
     }
   } catch(e) {}
-  return s; // last resort: show raw
+  return s;
+}
+
+function limparBusca() {
+  document.getElementById('busca-nome').value = '';
+  document.getElementById('kpi-total').textContent    = 'R$ 0,00';
+  document.getElementById('kpi-pago').textContent     = 'R$ 0,00';
+  document.getElementById('kpi-pendente').textContent = 'R$ 0,00';
+  document.getElementById('kpi-pedidos').textContent  = '0 pedidos';
+  document.getElementById('kpi-ultima').textContent      = '—';
+  document.getElementById('kpi-ultima-sub').textContent  = 'Sem consulta';
+  document.getElementById('section-pendentes').style.display = 'none';
+  document.getElementById('badge-historico').textContent = '0';
+  document.getElementById('list-historico').innerHTML =
+    '<div class="empty-state"><div class="empty-icon">🔍</div>Pesquise um cliente para ver o histórico.</div>';
+  const sug = document.getElementById('cliente-suggestions');
+  sug.style.display = 'none';
+  sug.innerHTML = '';
+}
+
+function normalizeText(str) {
+  return String(str || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+}
+
+function loadClientes() {
+  fetch(`${SCRIPT_URL}?action=nomes`)
+    .then(r => r.json())
+    .then(data => {
+      allClientes = Array.isArray(data.clientes) ? data.clientes : [];
+      const dl = document.getElementById('clientes-list');
+      if (!dl) return;
+      dl.innerHTML = allClientes.slice(0, 600).map(nome => {
+        const safe = String(nome).replace(/"/g, '&quot;');
+        return `<option value="${safe}"></option>`;
+      }).join('');
+    })
+    .catch(() => {});
+}
+
+function getMatchingClientes(nome) {
+  const n = normalizeText(nome);
+  if (!n) return [];
+  return allClientes.filter(c => normalizeText(c).includes(n));
+}
+
+function renderClientSuggestions(matches) {
+  const box = document.getElementById('cliente-suggestions');
+  if (!matches.length) {
+    box.style.display = 'none';
+    box.innerHTML = '';
+    return;
+  }
+  box.style.display = '';
+  box.innerHTML = `
+    <div class="client-suggestion-wrap">
+      <div class="client-suggestion-title">Foram encontrados vários clientes. Escolha um:</div>
+      <div class="client-suggestion-list">
+        ${matches.slice(0, 10).map(nome => `
+          <button class="client-suggestion-btn" type="button" onclick='buscarClienteExato(${JSON.stringify(nome)})'>
+            ${nome}
+            <div class="client-suggestion-meta">Toque para abrir só este cliente</div>
+          </button>
+        `).join('')}
+      </div>
+    </div>`;
+}
+
+function buscarClienteExato(nome) {
+  document.getElementById('busca-nome').value = nome;
+  document.getElementById('cliente-suggestions').style.display = 'none';
+  document.getElementById('cliente-suggestions').innerHTML = '';
+  executarBuscaCliente(nome);
 }
 
 function buscarCliente() {
   const nome = document.getElementById('busca-nome').value.trim();
   if (!nome) { showToast('⚠️ Digite um nome para buscar'); return; }
 
-  // Show loading
+  const matches = getMatchingClientes(nome);
+  const exactExists = matches.some(c => normalizeText(c) === normalizeText(nome));
+
+  if (matches.length > 1 && !exactExists) {
+    renderClientSuggestions(matches);
+    showToast('ℹ️ Selecione o cliente correto');
+    return;
+  }
+
+  if (matches.length === 1 && !exactExists) {
+    document.getElementById('busca-nome').value = matches[0];
+    executarBuscaCliente(matches[0]);
+    return;
+  }
+
+  document.getElementById('cliente-suggestions').style.display = 'none';
+  document.getElementById('cliente-suggestions').innerHTML = '';
+  executarBuscaCliente(nome);
+}
+
+function executarBuscaCliente(nome) {
   document.getElementById('list-historico').innerHTML =
     '<div class="loading-state"><div class="spinner"></div>Buscando dados...</div>';
   document.getElementById('section-pendentes').style.display = 'none';
@@ -728,46 +908,6 @@ function buscarCliente() {
       document.getElementById('list-historico').innerHTML =
         '<div class="empty-state"><div class="empty-icon">⚠️</div>Erro ao conectar. Verifique a conexão.</div>';
     });
-}
-
-function renderConsulta(data) {
-  const { registros, totalGeral, totalPago, totalPendente } = data;
-
-  // KPIs
-  document.getElementById('kpi-total').textContent    = fmt(totalGeral);
-  document.getElementById('kpi-pago').textContent     = fmt(totalPago);
-  document.getElementById('kpi-pendente').textContent = fmt(totalPendente);
-  document.getElementById('kpi-pedidos').textContent  = `${registros.length} pedido${registros.length !== 1 ? 's' : ''}`;
-
-  if (registros.length > 0) {
-    const ultimo = registros[registros.length - 1];
-    document.getElementById('kpi-ultima').textContent     = fmtDate(ultimo.data);
-    document.getElementById('kpi-ultima-sub').textContent = ultimo.itens ? ultimo.itens.substring(0,40)+'…' : '—';
-  } else {
-    document.getElementById('kpi-ultima').textContent     = '—';
-    document.getElementById('kpi-ultima-sub').textContent = 'Nenhum registro';
-  }
-
-  // Pendentes section
-  const pendentes = registros.filter(r => (r.pagamento||'').toLowerCase() === 'pendente');
-  const secPend = document.getElementById('section-pendentes');
-  if (pendentes.length > 0) {
-    secPend.style.display = '';
-    document.getElementById('badge-pendentes').textContent = pendentes.length;
-    document.getElementById('list-pendentes').innerHTML = pendentes.map(r => histItem(r)).join('');
-  } else {
-    secPend.style.display = 'none';
-  }
-
-  // All records (last 10, most recent first)
-  const sorted = [...registros].reverse().slice(0, 10);
-  document.getElementById('badge-historico').textContent = registros.length;
-  if (sorted.length === 0) {
-    document.getElementById('list-historico').innerHTML =
-      '<div class="empty-state"><div class="empty-icon">😕</div>Nenhuma compra encontrada para este nome.</div>';
-  } else {
-    document.getElementById('list-historico').innerHTML = sorted.map(r => histItem(r)).join('');
-  }
 }
 
 function histItem(r) {
@@ -790,20 +930,42 @@ function histItem(r) {
   </div>`;
 }
 
-function limparBusca() {
-  document.getElementById('busca-nome').value = '';
-  document.getElementById('kpi-total').textContent    = 'R$ 0,00';
-  document.getElementById('kpi-pago').textContent     = 'R$ 0,00';
-  document.getElementById('kpi-pendente').textContent = 'R$ 0,00';
-  document.getElementById('kpi-pedidos').textContent  = '0 pedidos';
-  document.getElementById('kpi-ultima').textContent      = '—';
-  document.getElementById('kpi-ultima-sub').textContent  = 'Sem consulta';
-  document.getElementById('section-pendentes').style.display = 'none';
-  document.getElementById('badge-historico').textContent = '0';
-  document.getElementById('list-historico').innerHTML =
-    '<div class="empty-state"><div class="empty-icon">🔍</div>Pesquise um cliente para ver o histórico.</div>';
-}
+function renderConsulta(data) {
+  const { registros, totalGeral, totalPago, totalPendente } = data;
 
+  document.getElementById('kpi-total').textContent    = fmt(totalGeral);
+  document.getElementById('kpi-pago').textContent     = fmt(totalPago);
+  document.getElementById('kpi-pendente').textContent = fmt(totalPendente);
+  document.getElementById('kpi-pedidos').textContent  = `${registros.length} pedido${registros.length !== 1 ? 's' : ''}`;
+
+  if (registros.length > 0) {
+    const ultimo = registros[registros.length - 1];
+    document.getElementById('kpi-ultima').textContent     = fmtDate(ultimo.data);
+    document.getElementById('kpi-ultima-sub').textContent = ultimo.itens ? ultimo.itens.substring(0,40)+'…' : '—';
+  } else {
+    document.getElementById('kpi-ultima').textContent     = '—';
+    document.getElementById('kpi-ultima-sub').textContent = 'Nenhum registro';
+  }
+
+  const pendentes = registros.filter(r => (r.pagamento||'').toLowerCase() === 'pendente');
+  const secPend = document.getElementById('section-pendentes');
+  if (pendentes.length > 0) {
+    secPend.style.display = '';
+    document.getElementById('badge-pendentes').textContent = pendentes.length;
+    document.getElementById('list-pendentes').innerHTML = pendentes.map(r => histItem(r)).join('');
+  } else {
+    secPend.style.display = 'none';
+  }
+
+  const sorted = [...registros].reverse().slice(0, 10);
+  document.getElementById('badge-historico').textContent = registros.length;
+  if (sorted.length === 0) {
+    document.getElementById('list-historico').innerHTML =
+      '<div class="empty-state"><div class="empty-icon">😕</div>Nenhuma compra encontrada para este nome.</div>';
+  } else {
+    document.getElementById('list-historico').innerHTML = sorted.map(r => histItem(r)).join('');
+  }
+}
 // ── TOAST ───────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
