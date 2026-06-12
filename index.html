@@ -1,468 +1,419 @@
-#include <ESP32Servo.h>
-#include <BLEDevice.h>
-#include <BLEServer.h>
-#include <BLEUtils.h>
-#include <BLE2902.h>
-
-Servo servo;
-
-// --- UUIDs BLE mantidos da torre original ---
-#define SERVICE_UUID           "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
-#define CHARACTERISTIC_UUID_RX "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
-#define CHARACTERISTIC_UUID_TX "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
-
-// --- Sensor condutivo do reservatorio superior: 0 a 500 mL em passos de 50 mL ---
-const int supNivel0   = 25;
-const int supNivel50  = 13;
-const int supNivel100 = 18;
-const int supNivel150 = 14;
-const int supNivel200 = 12;
-const int supNivel250 = 26;
-const int supNivel300 = 27;
-const int supNivel350 = 32;
-const int supNivel400 = 33;
-const int supNivel450 = 17;
-const int supNivel500 = 16;
-
-// --- Sensor condutivo do reservatorio inferior: 50 a 500 mL em passos de 50 mL ---
-const int infNivel50  = 35;
-const int infNivel100 = 21;
-const int infNivel150 = 25;
-const int infNivel200 = 23;
-const int infNivel250 = 34;
-const int infNivel300 = 19;
-const int infNivel350 = 36;
-const int infNivel400 = 22;
-const int infNivel450 = 15;
-const int infNivel500 = 2;
-
-// --- Servo ---
-const int pinoServo = 5;
-const int servoAbertoGraus = 5;
-const int servoFechadoGraus = 90;
-const int volumeMaximoMl = 500;
-
-// --- Bomba ---
-const int pinoBomba = 4;
-
-unsigned long ultimoLogSerial = 0;
-unsigned long ultimoEnvioBLE = 0;
-int ultimoAngulo = -1;
-int volumeAlvo = 0;
-bool esvaziamentoAutomatico = false;
-bool bombeamentoAutomatico = false;
-bool bombaLigada = false;
-bool deviceConnected = false;
-bool oldDeviceConnected = false;
-BLECharacteristic *pCharacteristicTX = nullptr;
-
-bool eletrodoAtivo(int pino) {
-  return digitalRead(pino) == LOW;
-}
-
-void configurarEntradaNivel(int pino) {
-  if (pino == 34 || pino == 35 || pino == 36 || pino == 39) {
-    pinMode(pino, INPUT);
-  } else {
-    pinMode(pino, INPUT_PULLUP);
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="theme-color" content="#0a1628" />
+<title>Torre TE311</title>
+<style>
+  :root {
+    --bg:       #0a1628;
+    --surface:  #111e33;
+    --surface2: #182540;
+    --border:   #1e304d;
+    --teal:     #1D9E75;
+    --teal-bg:  rgba(29,158,117,0.12);
+    --blue:     #378add;
+    --blue-bg:  rgba(55,138,221,0.12);
+    --red:      #D85A30;
+    --amber:    #ef9f27;
+    --amber-bg: rgba(239,159,39,0.12);
+    --text:     #e8eef5;
+    --muted:    #7a94b0;
+    --radius:   12px;
+    --radius-sm: 8px;
   }
-}
-
-int lerVolumeSuperior() {
-  bool a0   = eletrodoAtivo(supNivel0);
-  bool a50  = eletrodoAtivo(supNivel50);
-  bool a100 = eletrodoAtivo(supNivel100);
-  bool a150 = eletrodoAtivo(supNivel150);
-  bool a200 = eletrodoAtivo(supNivel200);
-  bool a250 = eletrodoAtivo(supNivel250);
-  bool a300 = eletrodoAtivo(supNivel300);
-  bool a350 = eletrodoAtivo(supNivel350);
-  bool a400 = eletrodoAtivo(supNivel400);
-  bool a450 = eletrodoAtivo(supNivel450);
-  bool a500 = eletrodoAtivo(supNivel500);
-
-  if (a500) return 500;
-  if (a450) return 450;
-  if (a400) return 400;
-  if (a350) return 350;
-  if (a300) return 300;
-  if (a250) return 250;
-  if (a200) return 200;
-  if (a150) return 150;
-  if (a100) return 100;
-  if (a50)  return 50;
-  if (a0)   return 0;
-
-  return 0;
-}
-
-int lerVolumeInferior() {
-  bool a50  = eletrodoAtivo(infNivel50);
-  bool a100 = eletrodoAtivo(infNivel100);
-  bool a150 = eletrodoAtivo(infNivel150);
-  bool a200 = eletrodoAtivo(infNivel200);
-  bool a250 = eletrodoAtivo(infNivel250);
-  bool a300 = eletrodoAtivo(infNivel300);
-  bool a350 = eletrodoAtivo(infNivel350);
-  bool a400 = eletrodoAtivo(infNivel400);
-  bool a450 = eletrodoAtivo(infNivel450);
-  bool a500 = eletrodoAtivo(infNivel500);
-
-  if (a500) return 500;
-  if (a450) return 450;
-  if (a400) return 400;
-  if (a350) return 350;
-  if (a300) return 300;
-  if (a250) return 250;
-  if (a200) return 200;
-  if (a150) return 150;
-  if (a100) return 100;
-  if (a50)  return 50;
-
-  return 0;
-}
-
-void configurarSensores() {
-  configurarEntradaNivel(supNivel0);
-  configurarEntradaNivel(supNivel50);
-  configurarEntradaNivel(supNivel100);
-  configurarEntradaNivel(supNivel150);
-  configurarEntradaNivel(supNivel200);
-  configurarEntradaNivel(supNivel250);
-  configurarEntradaNivel(supNivel300);
-  configurarEntradaNivel(supNivel350);
-  configurarEntradaNivel(supNivel400);
-  configurarEntradaNivel(supNivel450);
-  configurarEntradaNivel(supNivel500);
-
-  configurarEntradaNivel(infNivel50);
-  configurarEntradaNivel(infNivel100);
-  configurarEntradaNivel(infNivel150);
-  configurarEntradaNivel(infNivel200);
-  configurarEntradaNivel(infNivel250);
-  configurarEntradaNivel(infNivel300);
-  configurarEntradaNivel(infNivel350);
-  configurarEntradaNivel(infNivel400);
-  configurarEntradaNivel(infNivel450);
-  configurarEntradaNivel(infNivel500);
-}
-
-void configurarBomba() {
-  pinMode(pinoBomba, OUTPUT);
-  digitalWrite(pinoBomba, LOW);
-  bombaLigada = false;
-}
-
-void desligarBomba() {
-  if (!bombaLigada) return;
-
-  digitalWrite(pinoBomba, LOW);
-  bombaLigada = false;
-  Serial.println("Bomba desligada");
-}
-
-void ligarBomba() {
-  if (bombaLigada) return;
-
-  digitalWrite(pinoBomba, HIGH);
-  bombaLigada = true;
-  Serial.println("Bomba ligada");
-}
-
-void processarServoSerial() {
-  if (!Serial.available()) return;
-
-  int angulo = Serial.parseInt();
-
-  if (angulo >= 0 && angulo <= 180) {
-    servo.write(angulo);
-    ultimoAngulo = angulo;
-
-    Serial.print("Movendo para ");
-    Serial.print(angulo);
-    Serial.println(" graus");
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
   }
-}
 
-void moverServo(int angulo) {
-  if (angulo < 0 || angulo > 180) return;
+  /* ── Header ── */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-left h1 { font-size: 17px; font-weight: 600; letter-spacing: 0.02em; }
+  .header-left p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .conn-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 99px;
+    border: 1px solid var(--border); background: var(--surface);
+    font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text);
+    transition: opacity 0.15s;
+  }
+  .conn-pill:active { opacity: 0.7; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); transition: background 0.3s; }
+  .dot.on { background: var(--teal); box-shadow: 0 0 6px var(--teal); }
 
-  servo.write(angulo);
-  ultimoAngulo = angulo;
+  /* ── Main ── */
+  main { padding: 14px 14px 28px; display: flex; flex-direction: column; gap: 12px; }
 
-  Serial.print("Movendo para ");
-  Serial.print(angulo);
-  Serial.println(" graus");
-}
+  /* ── Alert ── */
+  .alert {
+    background: var(--blue-bg); border: 1px solid rgba(55,138,221,0.25);
+    border-radius: var(--radius-sm); padding: 10px 12px;
+    font-size: 12px; color: #85b7eb; line-height: 1.5;
+  }
+  .alert strong { color: var(--blue); }
 
-void fecharServo() {
-  moverServo(servoFechadoGraus);
-}
+  /* ── Card ── */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+  .card-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 12px; }
 
-void abrirServo() {
-  moverServo(servoAbertoGraus);
-}
+  /* ── Reservatórios lado a lado ── */
+  .reservoirs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .res-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 12px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .res-title {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--muted); text-align: center; line-height: 1.3;
+  }
 
-void aplicarVolumeAlvo(int novoVolumeAlvo) {
-  volumeAlvo = constrain(novoVolumeAlvo, 0, volumeMaximoMl);
-  int volumeAtual = lerVolumeSuperior();
-  int volumeInferior = lerVolumeInferior();
+  /* ── Tank ── */
+  .tank {
+    position: relative; width: 52px; height: 100px;
+    border: 1.5px solid var(--border); border-radius: 3px 3px 8px 8px;
+    overflow: hidden; background: var(--surface2);
+  }
+  .tank-fill {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    transition: height 0.7s cubic-bezier(0.4,0,0.2,1);
+  }
+  .tank-fill.sup { background: var(--teal); opacity: 0.85; }
+  .tank-fill.inf { background: var(--blue); opacity: 0.85; }
+  .tank-lines {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(to top, transparent 0, transparent 19px, var(--border) 19px, var(--border) 20px);
+    pointer-events: none;
+  }
+  .tank-pct {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--text); z-index: 2;
+  }
 
-  Serial.print("Set recebido: ");
-  Serial.print(volumeAlvo);
-  Serial.print(" mL | Volume atual: ");
-  Serial.print(volumeAtual);
-  Serial.print(" mL | Inferior: ");
-  Serial.print(volumeInferior);
-  Serial.println(" mL");
+  /* Tubulação entre os tanques */
+  .pipe-area {
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .pipe-svg { width: 28px; }
+  .pipe-flow { stroke-dasharray: 4 4; animation: flowAnim 0.6s linear infinite; }
+  .pipe-flow.stopped { animation: none; }
+  @keyframes flowAnim { to { stroke-dashoffset: -8; } }
 
-  if (volumeAtual > volumeAlvo) {
-    esvaziamentoAutomatico = true;
-    bombeamentoAutomatico = false;
-    desligarBomba();
-    abrirServo();
-    Serial.println("Acao: abrir servo para esvaziar");
-  } else {
-    esvaziamentoAutomatico = false;
-    fecharServo();
-    if (volumeAtual < volumeAlvo) {
-      if (volumeInferior > 0) {
-        bombeamentoAutomatico = true;
-        Serial.println("Acao: fechar servo e ligar bomba");
-      } else {
-        bombeamentoAutomatico = false;
-        desligarBomba();
-        Serial.println("Acao bloqueada: reservatorio inferior vazio");
-      }
+  .res-vol { font-size: 18px; font-weight: 500; line-height: 1; }
+  .res-vol small { font-size: 12px; color: var(--muted); margin-left: 2px; font-weight: 400; }
+  .res-sub { font-size: 11px; color: var(--muted); text-align: center; }
+
+  /* ── Bombeando badge ── */
+  .pump-status {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 500;
+    background: var(--teal-bg); color: var(--teal);
+    opacity: 0; transition: opacity 0.3s; margin: 0 auto;
+  }
+  .pump-status.show { opacity: 1; }
+  .pump-pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: pulse 1s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.4} }
+
+  /* ── Volume selector ── */
+  .vol-row { display: flex; align-items: center; }
+  .vol-btn {
+    width: 52px; height: 52px; flex-shrink: 0;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); font-size: 20px; font-weight: 300; cursor: pointer;
+  }
+  .vol-btn:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+  .vol-btn:last-child  { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+  .vol-btn:active { background: var(--border); }
+  .vol-mid {
+    flex: 1; height: 52px;
+    background: var(--surface2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+  }
+  .vol-mid-num  { font-size: 24px; font-weight: 500; }
+  .vol-mid-unit { font-size: 14px; color: var(--muted); }
+
+  /* ── Action buttons ── */
+  .actions { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .btn-primary, .btn-danger {
+    width: 100%; padding: 15px; border: none; border-radius: var(--radius-sm);
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn-primary { background: var(--teal); color: #fff; }
+  .btn-danger  { background: var(--red);  color: #fff; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-danger:active  { transform: scale(0.98); }
+  .btn-primary:disabled, .btn-danger:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+  /* ── Stats ── */
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat { background: var(--surface2); border-radius: var(--radius-sm); padding: 12px; }
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .stat-val   { font-size: 20px; font-weight: 500; margin-top: 2px; }
+  .stat-val small { font-size: 12px; color: var(--muted); margin-left: 2px; }
+
+  /* ── Log ── */
+  .log {
+    background: var(--surface2); border-radius: var(--radius-sm);
+    padding: 10px 12px; max-height: 80px; overflow-y: auto;
+    font-size: 11px; font-family: 'SF Mono', 'Fira Mono', monospace;
+    color: var(--muted); line-height: 1.6;
+  }
+  .log .ok   { color: var(--teal); }
+  .log .err  { color: var(--red); }
+  .log .info { color: var(--blue); }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <h1>Torre TE311</h1>
+    <p>Controle BLE — Reservatórios</p>
+  </div>
+  <button class="conn-pill" id="connBtn" onclick="toggleConnect()">
+    <span class="dot" id="dot"></span>
+    <span id="connLabel">Conectar</span>
+  </button>
+</header>
+
+<main>
+
+  <div class="alert" id="iosAlert">
+    <strong>iPhone / Safari:</strong> use o <strong>Bluefy</strong> (App Store, gratuito) — Safari não suporta Web Bluetooth.
+  </div>
+
+  <!-- Reservatórios -->
+  <div class="reservoirs">
+
+    <!-- Superior -->
+    <div class="res-card">
+      <div class="res-title">Reservatório<br>Superior</div>
+      <div class="tank">
+        <div class="tank-fill sup" id="tankSupFill" style="height:0%"></div>
+        <div class="tank-lines"></div>
+        <div class="tank-pct" id="tankSupPct">0%</div>
+      </div>
+      <div class="res-vol" id="supVol">0 <small>mL</small></div>
+      <div class="res-sub" id="supSub">Vazio</div>
+    </div>
+
+    <!-- Inferior -->
+    <div class="res-card">
+      <div class="res-title">Reservatório<br>Inferior</div>
+      <div class="tank">
+        <div class="tank-fill inf" id="tankInfFill" style="height:0%"></div>
+        <div class="tank-lines"></div>
+        <div class="tank-pct" id="tankInfPct">0%</div>
+      </div>
+      <div class="res-vol" id="infVol">— <small>mL</small></div>
+      <div class="res-sub" id="infSub">Aguardando</div>
+    </div>
+
+  </div>
+
+  <!-- Badge bombeando (centralizado entre os dois tanques) -->
+  <div style="display:flex;align-items:center;justify-content:center;">
+    <div class="pump-status" id="pumpStatus">
+      <div class="pump-pulse"></div>
+      Bombeando ↑
+    </div>
+  </div>
+
+  <!-- Controle de bombeamento -->
+  <div class="card">
+    <div class="card-label">Volume alvo — Reservatório Superior</div>
+
+    <div class="vol-row">
+      <button class="vol-btn" onclick="changeVol(-50)">−</button>
+      <div class="vol-mid">
+        <span class="vol-mid-num" id="targetNum">200</span>
+        <span class="vol-mid-unit">mL</span>
+      </div>
+      <button class="vol-btn" onclick="changeVol(+50)">+</button>
+    </div>
+
+    <div class="actions">
+      <button class="btn-primary" id="startBtn" onclick="startPump()" disabled>▶ Iniciar bombeamento</button>
+      <button class="btn-danger"  id="stopBtn"  onclick="stopPump()"  disabled>■ Parar</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">Alvo (sup)</div>
+      <div class="stat-val" id="statTarget">200 <small>mL</small></div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Restante</div>
+      <div class="stat-val" id="statRemain">—</div>
+    </div>
+  </div>
+
+  <!-- Log -->
+  <div class="log" id="logBox"><span class="info">[sistema] Aguardando conexão...</span></div>
+
+</main>
+
+<script>
+  const SVC = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+  const RX  = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
+  const TX  = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
+
+  let device  = null;
+  let rxChar  = null;
+  let target  = 200;
+  let supML   = 0;
+  let infML   = 0;
+  let pumping = false;
+  const SUP_MAX = 500;
+  const INF_MAX = 500; // ajuste se o inferior tiver capacidade diferente
+
+  const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent);
+  if (!isIOS) document.getElementById('iosAlert').style.display = 'none';
+
+  function log(msg, cls) {
+    const box = document.getElementById('logBox');
+    const d   = new Date();
+    const ts  = [d.getHours(), d.getMinutes(), d.getSeconds()].map(n => String(n).padStart(2,'0')).join(':');
+    box.innerHTML += `<br><span class="${cls||''}">[${ts}] ${msg}</span>`;
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function changeVol(delta) {
+    target = Math.max(0, Math.min(SUP_MAX, target + delta));
+    document.getElementById('targetNum').textContent = target;
+    document.getElementById('statTarget').innerHTML  = target + ' <small>mL</small>';
+    updateRemain();
+  }
+
+  function updateRemain() {
+    const rem = pumping ? Math.max(0, target - supML) : null;
+    document.getElementById('statRemain').innerHTML = rem !== null ? rem + ' <small>mL</small>' : '—';
+  }
+
+  function updateSup(ml) {
+    supML = Math.max(0, Math.min(SUP_MAX, ml));
+    const pct = Math.round((supML / SUP_MAX) * 100);
+    document.getElementById('tankSupFill').style.height = pct + '%';
+    document.getElementById('tankSupPct').textContent   = pct + '%';
+    document.getElementById('supVol').innerHTML         = supML + ' <small>mL</small>';
+    document.getElementById('supSub').textContent       = pct === 0 ? 'Vazio' : pct === 100 ? 'Cheio' : pct + '% cheio';
+    updateRemain();
+    if (pumping && supML >= target) {
+      pumping = false;
+      document.getElementById('pumpStatus').classList.remove('show');
+      log('Alvo atingido — bomba parou', 'ok');
+    }
+  }
+
+  function updateInf(ml) {
+    infML = Math.max(0, Math.min(INF_MAX, ml));
+    const pct = Math.round((infML / INF_MAX) * 100);
+    document.getElementById('tankInfFill').style.height = pct + '%';
+    document.getElementById('tankInfPct').textContent   = pct + '%';
+    document.getElementById('infVol').innerHTML         = infML + ' <small>mL</small>';
+    document.getElementById('infSub').textContent       = pct === 0 ? 'Vazio' : pct === 100 ? 'Cheio' : pct + '% cheio';
+  }
+
+  /* Parseia "250,130" ou "250" (retrocompatível) */
+  function onBLEData(raw) {
+    raw = raw.trim();
+    if (raw.includes(',')) {
+      const parts = raw.split(',');
+      const s = parseInt(parts[0], 10);
+      const i = parseInt(parts[1], 10);
+      if (!isNaN(s)) updateSup(s);
+      if (!isNaN(i)) updateInf(i);
     } else {
-      bombeamentoAutomatico = false;
-      desligarBomba();
-      Serial.println("Acao: alvo ja atingido");
-    }
-  }
-}
-
-void atualizarControleAlvo() {
-  int volumeAtual = lerVolumeSuperior();
-  int volumeInferior = lerVolumeInferior();
-
-  if (bombeamentoAutomatico) {
-    fecharServo();
-    if (volumeInferior <= 0) {
-      bombeamentoAutomatico = false;
-      desligarBomba();
-      Serial.println("Reservatorio inferior vazio: bomba desligada");
-    } else if (volumeAtual >= volumeAlvo || volumeAtual >= volumeMaximoMl) {
-      bombeamentoAutomatico = false;
-      desligarBomba();
-      Serial.println("Alvo atingido no bombeamento: bomba desligada");
-    } else {
-      ligarBomba();
+      const s = parseInt(raw, 10);
+      if (!isNaN(s)) updateSup(s);
     }
   }
 
-  if (esvaziamentoAutomatico) {
-    desligarBomba();
-    if (volumeAtual <= volumeAlvo) {
-      esvaziamentoAutomatico = false;
-      fecharServo();
-      Serial.println("Alvo atingido no esvaziamento: servo fechado");
+  async function toggleConnect() {
+    if (device && device.gatt.connected) { device.gatt.disconnect(); return; }
+    if (!navigator.bluetooth) {
+      log('Web Bluetooth não disponível. Use Bluefy no iPhone.', 'err');
+      alert('Web Bluetooth não disponível.\nNo iPhone: abra no app Bluefy.');
+      return;
+    }
+    try {
+      document.getElementById('connLabel').textContent = 'Procurando…';
+      log('Scan BLE iniciado…', 'info');
+      device = await navigator.bluetooth.requestDevice({
+        filters: [{ name: 'ESP32_Torre_UFPR' }],
+        optionalServices: [SVC]
+      });
+      device.addEventListener('gattserverdisconnected', onDisconnect);
+      log('Encontrado. Conectando…', 'info');
+      const server  = await device.gatt.connect();
+      const service = await server.getPrimaryService(SVC);
+      rxChar        = await service.getCharacteristic(RX);
+      const txChar  = await service.getCharacteristic(TX);
+      await txChar.startNotifications();
+      txChar.addEventListener('characteristicvaluechanged', e => {
+        onBLEData(new TextDecoder().decode(e.target.value));
+      });
+      onConnect();
+    } catch (err) {
+      if (err.name !== 'NotFoundError') log('Erro: ' + err.message, 'err');
+      document.getElementById('connLabel').textContent = 'Conectar';
     }
   }
-}
 
-class MyServerCallbacks : public BLEServerCallbacks {
-  void onConnect(BLEServer *pServer) {
-    deviceConnected = true;
+  function onConnect() {
+    document.getElementById('dot').classList.add('on');
+    document.getElementById('connLabel').textContent = 'Conectado';
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('stopBtn').disabled  = false;
+    log('Conectado a ' + device.name, 'ok');
   }
 
-  void onDisconnect(BLEServer *pServer) {
-    deviceConnected = false;
-  }
-};
-
-class MyCallbacks : public BLECharacteristicCallbacks {
-  void onWrite(BLECharacteristic *pCharacteristic) {
-    String comando = pCharacteristic->getValue().c_str();
-    comando.trim();
-    comando.toLowerCase();
-
-    Serial.print("Comando BLE recebido: ");
-    Serial.println(comando);
-
-    if (comando.startsWith("set:")) {
-      aplicarVolumeAlvo(comando.substring(4).toInt());
-    } else if (comando == "servo:open" || comando == "drain:on" || comando == "abrir") {
-      esvaziamentoAutomatico = false;
-      bombeamentoAutomatico = false;
-      desligarBomba();
-      abrirServo();
-    } else if (comando == "servo:close" || comando == "drain:off" || comando == "fechar") {
-      esvaziamentoAutomatico = false;
-      bombeamentoAutomatico = false;
-      desligarBomba();
-      fecharServo();
-    } else if (comando.startsWith("servo:")) {
-      esvaziamentoAutomatico = false;
-      bombeamentoAutomatico = false;
-      desligarBomba();
-      moverServo(comando.substring(6).toInt());
-    } else if (comando == "off" || comando == "stop" || comando == "parar") {
-      esvaziamentoAutomatico = false;
-      bombeamentoAutomatico = false;
-      desligarBomba();
-      fecharServo();
-    }
-  }
-};
-
-void configurarBLE() {
-  BLEDevice::init("ESP32_Torre_UFPR");
-
-  BLEServer *pServer = BLEDevice::createServer();
-  pServer->setCallbacks(new MyServerCallbacks());
-
-  BLEService *pService = pServer->createService(SERVICE_UUID);
-
-  BLECharacteristic *pRX = pService->createCharacteristic(
-    CHARACTERISTIC_UUID_RX,
-    BLECharacteristic::PROPERTY_WRITE
-  );
-  pRX->setCallbacks(new MyCallbacks());
-
-  pCharacteristicTX = pService->createCharacteristic(
-    CHARACTERISTIC_UUID_TX,
-    BLECharacteristic::PROPERTY_NOTIFY
-  );
-  pCharacteristicTX->addDescriptor(new BLE2902());
-
-  pService->start();
-  BLEDevice::startAdvertising();
-}
-
-void atualizarConexaoBLE() {
-  if (!deviceConnected && oldDeviceConnected) {
-    BLEDevice::startAdvertising();
-    oldDeviceConnected = deviceConnected;
+  function onDisconnect() {
+    document.getElementById('dot').classList.remove('on');
+    document.getElementById('connLabel').textContent = 'Conectar';
+    document.getElementById('startBtn').disabled = true;
+    document.getElementById('stopBtn').disabled  = true;
+    document.getElementById('pumpStatus').classList.remove('show');
+    rxChar = null; pumping = false;
+    log('Desconectado.', 'err');
   }
 
-  if (deviceConnected && !oldDeviceConnected) {
-    oldDeviceConnected = deviceConnected;
-  }
-}
-
-void enviarVolumeBLE() {
-  if (!deviceConnected || pCharacteristicTX == nullptr) return;
-
-  unsigned long agora = millis();
-  if (agora - ultimoEnvioBLE < 500) return;
-
-  String mensagem = String(lerVolumeSuperior()) + "," + String(lerVolumeInferior());
-  pCharacteristicTX->setValue(mensagem.c_str());
-  pCharacteristicTX->notify();
-
-  ultimoEnvioBLE = agora;
-}
-
-void registrarStatusSerial() {
-  unsigned long agora = millis();
-  if (agora - ultimoLogSerial < 500) return;
-
-  int volume = lerVolumeSuperior();
-  int volumeInferior = lerVolumeInferior();
-
-  Serial.print("Superior: ");
-  Serial.print(volume);
-  Serial.print(" mL | Inferior: ");
-  Serial.print(volumeInferior);
-  Serial.print(" mL | Servo: ");
-
-  if (ultimoAngulo >= 0) {
-    Serial.print(ultimoAngulo);
-    Serial.print(" graus");
-  } else {
-    Serial.print("sem comando");
+  async function sendCmd(cmd) {
+    if (!rxChar) { log('Sem conexão BLE.', 'err'); return; }
+    try { await rxChar.writeValue(new TextEncoder().encode(cmd)); }
+    catch (e) { log('Erro ao enviar: ' + e.message, 'err'); }
   }
 
-  Serial.print(" | BLE: ");
-  Serial.print(deviceConnected ? "conectado" : "desconectado");
-  Serial.print(" | Alvo: ");
-  Serial.print(volumeAlvo);
-  Serial.print(" mL");
-  if (esvaziamentoAutomatico) {
-    Serial.print(" | esvaziando ate alvo");
+  async function startPump() {
+    await sendCmd('set:' + target);
+    pumping = true;
+    document.getElementById('pumpStatus').classList.add('show');
+    updateRemain();
+    log('Bombeamento → alvo ' + target + ' mL (superior)', 'ok');
   }
-  if (bombeamentoAutomatico) {
-    Serial.print(" | bombeando ate alvo");
+
+  async function stopPump() {
+    await sendCmd('off');
+    pumping = false;
+    document.getElementById('pumpStatus').classList.remove('show');
+    updateRemain();
+    log('Parado manualmente.', 'info');
   }
-  Serial.print(" | Bomba: ");
-  Serial.print(bombaLigada ? "on" : "off");
-
-  Serial.print(" | SUP LOW: 0=");
-  Serial.print(eletrodoAtivo(supNivel0));
-  Serial.print(" 50=");
-  Serial.print(eletrodoAtivo(supNivel50));
-  Serial.print(" 100=");
-  Serial.print(eletrodoAtivo(supNivel100));
-  Serial.print(" 150=");
-  Serial.print(eletrodoAtivo(supNivel150));
-  Serial.print(" 200=");
-  Serial.print(eletrodoAtivo(supNivel200));
-  Serial.print(" 250=");
-  Serial.print(eletrodoAtivo(supNivel250));
-  Serial.print(" 300=");
-  Serial.print(eletrodoAtivo(supNivel300));
-  Serial.print(" 350=");
-  Serial.print(eletrodoAtivo(supNivel350));
-  Serial.print(" 400=");
-  Serial.print(eletrodoAtivo(supNivel400));
-  Serial.print(" 450=");
-  Serial.print(eletrodoAtivo(supNivel450));
-  Serial.print(" 500=");
-  Serial.print(eletrodoAtivo(supNivel500));
-
-  Serial.print(" | INF LOW: 50=");
-  Serial.print(eletrodoAtivo(infNivel50));
-  Serial.print(" 100=");
-  Serial.print(eletrodoAtivo(infNivel100));
-  Serial.print(" 150=");
-  Serial.print(eletrodoAtivo(infNivel150));
-  Serial.print(" 200=");
-  Serial.print(eletrodoAtivo(infNivel200));
-  Serial.print(" 250=");
-  Serial.print(eletrodoAtivo(infNivel250));
-  Serial.print(" 300=");
-  Serial.print(eletrodoAtivo(infNivel300));
-  Serial.print(" 350=");
-  Serial.print(eletrodoAtivo(infNivel350));
-  Serial.print(" 400=");
-  Serial.print(eletrodoAtivo(infNivel400));
-  Serial.print(" 450=");
-  Serial.print(eletrodoAtivo(infNivel450));
-  Serial.print(" 500=");
-  Serial.print(eletrodoAtivo(infNivel500));
-  Serial.println();
-
-  ultimoLogSerial = agora;
-}
-
-void setup() {
-  Serial.begin(115200);
-
-  configurarSensores();
-  configurarBomba();
-  servo.attach(pinoServo);
-  configurarBLE();
-
-  Serial.println("Etapa 4: servo + sensor condutivo + BLE + set + bomba digital");
-  Serial.println("Serial: digite um angulo de 0 a 180");
-  Serial.println("BLE: envie set:400, set:200, abrir, fechar ou off");
-}
-
-void loop() {
-  atualizarConexaoBLE();
-  processarServoSerial();
-  atualizarControleAlvo();
-  enviarVolumeBLE();
-  registrarStatusSerial();
-}
+</script>
+</body>
+</html>
