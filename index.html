@@ -1,419 +1,2614 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="theme-color" content="#0a1628" />
-<title>Torre TE311</title>
-<style>
-  :root {
-    --bg:       #0a1628;
-    --surface:  #111e33;
-    --surface2: #182540;
-    --border:   #1e304d;
-    --teal:     #1D9E75;
-    --teal-bg:  rgba(29,158,117,0.12);
-    --blue:     #378add;
-    --blue-bg:  rgba(55,138,221,0.12);
-    --red:      #D85A30;
-    --amber:    #ef9f27;
-    --amber-bg: rgba(239,159,39,0.12);
-    --text:     #e8eef5;
-    --muted:    #7a94b0;
-    --radius:   12px;
-    --radius-sm: 8px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    min-height: 100vh;
-    padding-bottom: env(safe-area-inset-bottom, 16px);
-  }
+<html lang="pt-BR" data-theme="dark"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Curso IA: formação prática para usar inteligência artificial com método, verificação e autonomia.">
+  <meta name="color-scheme" content="light dark">
+  <title>Curso IA — Inteligência artificial com método e critério</title>
+  <style>
+    /* =========================================================
+       SISTEMA VISUAL — altere os tokens para retematizar o portal
+       ========================================================= */
+    :root {
+      --paper: #fcfcf8;
+      --paper-strong: #ffffff;
+      --ink: #0a2342;
+      --ink-soft: #4b5d70;
+      --teal: #087f73;
+      --teal-strong: #05665e;
+      --mint: #e8f6f0;
+      --sky: #eaf4ff;
+      --blue: #3269c8;
+      --lavender: #f0edff;
+      --violet: #7057c7;
+      --coral: #c94f43;
+      --coral-soft: #fff0ec;
+      --amber: #a25c00;
+      --amber-soft: #fff5db;
+      --line: #d7e0e5;
+      --line-strong: #b9c7cf;
+      --shadow-sm: 0 1px 2px rgba(10, 35, 66, .06);
+      --shadow-md: 0 16px 42px rgba(10, 35, 66, .10);
+      --radius-sm: .65rem;
+      --radius-md: 1rem;
+      --radius-lg: 1.45rem;
+      --container: 75rem;
+      --header-h: 4.75rem;
+      --ease: cubic-bezier(.2, .8, .2, 1);
+    }
 
-  /* ── Header ── */
-  .header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 20px 14px;
-    border-bottom: 1px solid var(--border);
-  }
-  .header-left h1 { font-size: 17px; font-weight: 600; letter-spacing: 0.02em; }
-  .header-left p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .conn-pill {
-    display: flex; align-items: center; gap: 6px;
-    padding: 6px 12px; border-radius: 99px;
-    border: 1px solid var(--border); background: var(--surface);
-    font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text);
-    transition: opacity 0.15s;
-  }
-  .conn-pill:active { opacity: 0.7; }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); transition: background 0.3s; }
-  .dot.on { background: var(--teal); box-shadow: 0 0 6px var(--teal); }
+    [data-theme="dark"] {
+      --paper: #071521;
+      --paper-strong: #0c1d2b;
+      --ink: #eef8ff;
+      --ink-soft: #aec0cd;
+      --teal: #0b756b;
+      --teal-strong: #7bddcf;
+      --mint: #0c2d2b;
+      --sky: #102b47;
+      --blue: #84b4ff;
+      --lavender: #241f41;
+      --violet: #b9a7ff;
+      --coral: #ff9287;
+      --coral-soft: #3b211f;
+      --amber: #ffc76b;
+      --amber-soft: #382b15;
+      --line: #29404f;
+      --line-strong: #3b5667;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, .18);
+      --shadow-md: 0 18px 45px rgba(0, 0, 0, .3);
+    }
 
-  /* ── Main ── */
-  main { padding: 14px 14px 28px; display: flex; flex-direction: column; gap: 12px; }
+    *,
+    *::before,
+    *::after { box-sizing: border-box; }
 
-  /* ── Alert ── */
-  .alert {
-    background: var(--blue-bg); border: 1px solid rgba(55,138,221,0.25);
-    border-radius: var(--radius-sm); padding: 10px 12px;
-    font-size: 12px; color: #85b7eb; line-height: 1.5;
-  }
-  .alert strong { color: var(--blue); }
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--header-h) + 1rem);
+    }
 
-  /* ── Card ── */
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
-  .card-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 12px; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1.6;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
 
-  /* ── Reservatórios lado a lado ── */
-  .reservoirs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .res-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 12px;
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-  }
-  .res-title {
-    font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em;
-    color: var(--muted); text-align: center; line-height: 1.3;
-  }
+    body.menu-open { overflow: hidden; }
 
-  /* ── Tank ── */
-  .tank {
-    position: relative; width: 52px; height: 100px;
-    border: 1.5px solid var(--border); border-radius: 3px 3px 8px 8px;
-    overflow: hidden; background: var(--surface2);
-  }
-  .tank-fill {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    transition: height 0.7s cubic-bezier(0.4,0,0.2,1);
-  }
-  .tank-fill.sup { background: var(--teal); opacity: 0.85; }
-  .tank-fill.inf { background: var(--blue); opacity: 0.85; }
-  .tank-lines {
-    position: absolute; inset: 0;
-    background: repeating-linear-gradient(to top, transparent 0, transparent 19px, var(--border) 19px, var(--border) 20px);
-    pointer-events: none;
-  }
-  .tank-pct {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 600; color: var(--text); z-index: 2;
-  }
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+      color: inherit;
+    }
 
-  /* Tubulação entre os tanques */
-  .pipe-area {
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-  }
-  .pipe-svg { width: 28px; }
-  .pipe-flow { stroke-dasharray: 4 4; animation: flowAnim 0.6s linear infinite; }
-  .pipe-flow.stopped { animation: none; }
-  @keyframes flowAnim { to { stroke-dashoffset: -8; } }
+    button,
+    select { cursor: pointer; }
 
-  .res-vol { font-size: 18px; font-weight: 500; line-height: 1; }
-  .res-vol small { font-size: 12px; color: var(--muted); margin-left: 2px; font-weight: 400; }
-  .res-sub { font-size: 11px; color: var(--muted); text-align: center; }
+    a { color: inherit; }
+    img, svg { display: block; max-width: 100%; }
+    [hidden] { display: none !important; }
+    h1, h2, h3, h4, p { margin-top: 0; }
+    h1, h2, h3, h4 { line-height: 1.12; text-wrap: balance; }
+    p { text-wrap: pretty; }
 
-  /* ── Bombeando badge ── */
-  .pump-status {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 500;
-    background: var(--teal-bg); color: var(--teal);
-    opacity: 0; transition: opacity 0.3s; margin: 0 auto;
-  }
-  .pump-status.show { opacity: 1; }
-  .pump-pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: pulse 1s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.4} }
+    :focus-visible {
+      outline: 3px solid var(--blue);
+      outline-offset: 3px;
+      border-radius: .25rem;
+    }
 
-  /* ── Volume selector ── */
-  .vol-row { display: flex; align-items: center; }
-  .vol-btn {
-    width: 52px; height: 52px; flex-shrink: 0;
-    background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text); font-size: 20px; font-weight: 300; cursor: pointer;
-  }
-  .vol-btn:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
-  .vol-btn:last-child  { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
-  .vol-btn:active { background: var(--border); }
-  .vol-mid {
-    flex: 1; height: 52px;
-    background: var(--surface2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center; gap: 4px;
-  }
-  .vol-mid-num  { font-size: 24px; font-weight: 500; }
-  .vol-mid-unit { font-size: 14px; color: var(--muted); }
+    ::selection {
+      background: var(--teal);
+      color: #fff;
+    }
 
-  /* ── Action buttons ── */
-  .actions { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-  .btn-primary, .btn-danger {
-    width: 100%; padding: 15px; border: none; border-radius: var(--radius-sm);
-    font-size: 15px; font-weight: 600; cursor: pointer;
-    transition: opacity 0.15s, transform 0.1s;
-  }
-  .btn-primary { background: var(--teal); color: #fff; }
-  .btn-danger  { background: var(--red);  color: #fff; }
-  .btn-primary:active { transform: scale(0.98); }
-  .btn-danger:active  { transform: scale(0.98); }
-  .btn-primary:disabled, .btn-danger:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+    .skip-link {
+      position: fixed;
+      z-index: 1000;
+      top: .75rem;
+      left: .75rem;
+      padding: .7rem 1rem;
+      border-radius: var(--radius-sm);
+      background: var(--ink);
+      color: var(--paper);
+      transform: translateY(-180%);
+      transition: transform .2s var(--ease);
+    }
 
-  /* ── Stats ── */
-  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .stat { background: var(--surface2); border-radius: var(--radius-sm); padding: 12px; }
-  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
-  .stat-val   { font-size: 20px; font-weight: 500; margin-top: 2px; }
-  .stat-val small { font-size: 12px; color: var(--muted); margin-left: 2px; }
+    .skip-link:focus { transform: translateY(0); }
 
-  /* ── Log ── */
-  .log {
-    background: var(--surface2); border-radius: var(--radius-sm);
-    padding: 10px 12px; max-height: 80px; overflow-y: auto;
-    font-size: 11px; font-family: 'SF Mono', 'Fira Mono', monospace;
-    color: var(--muted); line-height: 1.6;
-  }
-  .log .ok   { color: var(--teal); }
-  .log .err  { color: var(--red); }
-  .log .info { color: var(--blue); }
-</style>
+    .container {
+      width: min(calc(100% - 2rem), var(--container));
+      margin-inline: auto;
+    }
+
+    .section {
+      position: relative;
+      padding: clamp(4.5rem, 8vw, 7.5rem) 0;
+    }
+
+    .section--compact { padding-block: clamp(3.5rem, 6vw, 5rem); }
+    .section--mint { background: var(--mint); }
+    .section--sky { background: var(--sky); }
+    .section--lavender { background: var(--lavender); }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, .85fr) minmax(18rem, .6fr);
+      gap: 2rem;
+      align-items: end;
+      margin-bottom: clamp(2rem, 4vw, 3.5rem);
+    }
+
+    .chapter {
+      display: inline-flex;
+      align-items: center;
+      gap: .65rem;
+      margin-bottom: 1rem;
+      color: var(--teal-strong);
+      font-size: .79rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .chapter::before {
+      content: attr(data-number);
+      display: grid;
+      width: 1.85rem;
+      height: 1.85rem;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--teal);
+      color: #fff;
+      letter-spacing: 0;
+    }
+
+    .section-title {
+      max-width: 16ch;
+      margin-bottom: 0;
+      font-size: clamp(2.15rem, 5vw, 4rem);
+      letter-spacing: -.045em;
+    }
+
+    .section-lead {
+      max-width: 60ch;
+      margin-bottom: 0;
+      color: var(--ink-soft);
+      font-size: clamp(1rem, 1.5vw, 1.16rem);
+    }
+
+    .eyebrow {
+      margin-bottom: .75rem;
+      color: var(--teal-strong);
+      font-size: .82rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .muted { color: var(--ink-soft); }
+    .small { font-size: .875rem; }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      min-height: 2.9rem;
+      align-items: center;
+      justify-content: center;
+      gap: .6rem;
+      border: 1px solid transparent;
+      border-radius: .75rem;
+      padding: .72rem 1.05rem;
+      background: var(--teal);
+      color: #fff;
+      font-size: .92rem;
+      font-weight: 760;
+      line-height: 1.2;
+      text-decoration: none;
+      box-shadow: var(--shadow-sm);
+      transition: transform .18s var(--ease), background .18s, border-color .18s, box-shadow .18s;
+    }
+
+    .btn:hover {
+      background: var(--teal-strong);
+      box-shadow: 0 8px 22px rgba(8, 127, 115, .18);
+      transform: translateY(-2px);
+    }
+
+    .btn:active { transform: translateY(0); }
+
+    .btn--secondary {
+      border-color: var(--line-strong);
+      background: transparent;
+      color: var(--ink);
+      box-shadow: none;
+    }
+
+    .btn--secondary:hover {
+      border-color: var(--teal);
+      background: var(--mint);
+      color: var(--ink);
+    }
+
+    .btn--quiet {
+      min-height: 2.5rem;
+      padding: .55rem .8rem;
+      border-color: transparent;
+      background: transparent;
+      color: var(--teal-strong);
+      box-shadow: none;
+    }
+
+    .btn--quiet:hover {
+      background: var(--mint);
+      color: var(--teal-strong);
+      box-shadow: none;
+    }
+
+    .btn svg { width: 1.05rem; height: 1.05rem; }
+
+    .icon-button {
+      display: inline-grid;
+      width: 2.75rem;
+      height: 2.75rem;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: .75rem;
+      background: var(--paper-strong);
+      color: var(--ink);
+      transition: background .18s, border-color .18s, transform .18s;
+    }
+
+    .icon-button:hover {
+      border-color: var(--teal);
+      background: var(--mint);
+      transform: translateY(-1px);
+    }
+
+    .icon-button svg { width: 1.25rem; height: 1.25rem; }
+
+    /* Cabeçalho */
+    .site-header {
+      position: sticky;
+      z-index: 100;
+      top: 0;
+      min-height: var(--header-h);
+      border-bottom: 1px solid color-mix(in srgb, var(--line) 76%, transparent);
+      background: color-mix(in srgb, var(--paper) 91%, transparent);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav {
+      display: flex;
+      min-height: var(--header-h);
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: .72rem;
+      font-weight: 820;
+      letter-spacing: -.025em;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      position: relative;
+      width: 2.15rem;
+      height: 2.15rem;
+      color: var(--teal);
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset-block: .18rem;
+      width: .75rem;
+      border-block: .19rem solid currentColor;
+    }
+
+    .brand-mark::before {
+      left: .1rem;
+      border-left: .19rem solid currentColor;
+      border-radius: .28rem 0 0 .28rem;
+    }
+
+    .brand-mark::after {
+      right: .1rem;
+      border-right: .19rem solid currentColor;
+      border-radius: 0 .28rem .28rem 0;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: clamp(.6rem, 1.5vw, 1.35rem);
+    }
+
+    .nav-links a {
+      padding: .5rem .15rem;
+      color: var(--ink-soft);
+      font-size: .87rem;
+      font-weight: 680;
+      text-decoration: none;
+      transition: color .18s;
+    }
+
+    .nav-links a:hover { color: var(--teal-strong); }
+    .nav-actions { display: flex; align-items: center; gap: .55rem; }
+    .menu-toggle { display: none; }
+
+    /* Hero */
+    .hero {
+      min-height: calc(100svh - var(--header-h));
+      display: grid;
+      align-items: center;
+      overflow: clip;
+      padding-block: clamp(3.5rem, 8vw, 7rem);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      top: 8%;
+      right: -10%;
+      width: min(47rem, 60vw);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle, color-mix(in srgb, var(--mint) 80%, transparent), transparent 68%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(22rem, .8fr);
+      gap: clamp(2.5rem, 7vw, 6rem);
+      align-items: center;
+    }
+
+    .hero h1 {
+      max-width: 15ch;
+      margin-bottom: 1.35rem;
+      font-size: clamp(3.1rem, 6vw, 5.4rem);
+      letter-spacing: -.065em;
+    }
+
+    .hero-copy > p {
+      max-width: 58ch;
+      margin-bottom: 1.8rem;
+      color: var(--ink-soft);
+      font-size: clamp(1.05rem, 1.7vw, 1.28rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      margin-bottom: 2.4rem;
+    }
+
+    .hero-principles {
+      display: grid;
+      max-width: 45rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .7rem;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .hero-principles li {
+      padding-top: .85rem;
+      border-top: 1px solid var(--line);
+      color: var(--ink-soft);
+      font-size: .82rem;
+    }
+
+    .hero-principles strong {
+      display: block;
+      margin-bottom: .15rem;
+      color: var(--ink);
+      font-size: .91rem;
+    }
+
+    .notebook {
+      position: relative;
+      padding: clamp(1.5rem, 3vw, 2.4rem);
+      border: 1px solid var(--line);
+      border-radius: .4rem 1.35rem 1.35rem .4rem;
+      background:
+        linear-gradient(90deg, transparent 0 3rem, color-mix(in srgb, var(--coral) 30%, transparent) 3rem 3.1rem, transparent 3.1rem),
+        repeating-linear-gradient(0deg, transparent 0 2.65rem, color-mix(in srgb, var(--blue) 14%, transparent) 2.65rem 2.7rem),
+        var(--paper-strong);
+      box-shadow: var(--shadow-md);
+      transform: rotate(1.2deg);
+    }
+
+    .notebook::before {
+      content: "";
+      position: absolute;
+      inset-block: 1.1rem;
+      left: -.45rem;
+      width: .9rem;
+      background: repeating-linear-gradient(0deg, var(--ink) 0 .22rem, transparent .22rem .8rem);
+      opacity: .45;
+    }
+
+    .notebook::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      right: -1rem;
+      bottom: -1rem;
+      width: 48%;
+      height: 32%;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--teal) 18%, transparent);
+      filter: blur(25px);
+    }
+
+    .note-label {
+      display: inline-block;
+      margin: 0 0 1.4rem 2.35rem;
+      border-bottom: 2px solid var(--teal);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 700;
+      transform: rotate(-2deg);
+    }
+
+    .route-list {
+      display: grid;
+      gap: 1rem;
+      padding: 0;
+      margin: 0 0 0 2.25rem;
+      list-style: none;
+      counter-reset: route;
+    }
+
+    .route-list li {
+      display: grid;
+      grid-template-columns: 2.35rem 1fr;
+      gap: .8rem;
+      align-items: start;
+      counter-increment: route;
+    }
+
+    .route-list li::before {
+      content: counter(route);
+      display: grid;
+      width: 2.25rem;
+      height: 2.25rem;
+      place-items: center;
+      border: 2px solid var(--teal);
+      border-radius: 50%;
+      color: var(--teal-strong);
+      font-size: .83rem;
+      font-weight: 800;
+      background: var(--paper-strong);
+    }
+
+    .route-list strong { display: block; font-size: .94rem; }
+    .route-list span { color: var(--ink-soft); font-size: .78rem; }
+
+    .route-line {
+      width: 100%;
+      height: 3rem;
+      margin-top: 1.8rem;
+      color: var(--teal);
+    }
+
+    /* Visão e método */
+    .thesis-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: clamp(2rem, 6vw, 5rem);
+      align-items: start;
+    }
+
+    .thesis {
+      max-width: 19ch;
+      margin-bottom: 1.5rem;
+      font-size: clamp(2rem, 4.5vw, 3.8rem);
+      letter-spacing: -.045em;
+    }
+
+    .thesis-copy {
+      max-width: 62ch;
+      color: var(--ink-soft);
+      font-size: 1.06rem;
+    }
+
+    .method {
+      display: grid;
+      gap: 0;
+      border-block: 1px solid var(--line);
+    }
+
+    .method-step {
+      display: grid;
+      grid-template-columns: 3.2rem 1fr;
+      gap: 1rem;
+      padding: 1.2rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .method-step:last-child { border-bottom: 0; }
+
+    .method-letter {
+      display: grid;
+      width: 2.7rem;
+      height: 2.7rem;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--teal);
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 850;
+    }
+
+    .method-step h3 { margin: .15rem 0 .25rem; font-size: 1rem; }
+    .method-step p { margin-bottom: 0; color: var(--ink-soft); font-size: .88rem; }
+
+    /* Mapa da formação */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .55rem;
+      margin-bottom: 2rem;
+    }
+
+    .filter {
+      min-height: 2.55rem;
+      padding: .55rem .88rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--paper-strong);
+      color: var(--ink-soft);
+      font-size: .84rem;
+      font-weight: 720;
+      transition: background .18s, border-color .18s, color .18s;
+    }
+
+    .filter:hover,
+    .filter[aria-pressed="true"] {
+      border-color: var(--teal);
+      background: var(--teal);
+      color: #fff;
+    }
+
+    .learning-map {
+      position: relative;
+      display: grid;
+      gap: 1.15rem;
+    }
+
+    .level {
+      position: relative;
+      display: grid;
+      grid-template-columns: 10.5rem 1fr;
+      gap: 1rem;
+      padding: 1.15rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: color-mix(in srgb, var(--paper-strong) 88%, transparent);
+    }
+
+    .level::after {
+      content: "";
+      position: absolute;
+      right: 1.3rem;
+      top: 50%;
+      width: .8rem;
+      height: .8rem;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      background: var(--paper-strong);
+      transform: translateY(-50%);
+    }
+
+    .level--beginner { color: var(--teal-strong); }
+    .level--intermediate { color: var(--blue); }
+    .level--advanced { color: var(--violet); }
+
+    .level-label {
+      padding: .65rem .75rem;
+      border-right: 1px solid var(--line);
+    }
+
+    .level-label h3 { margin-bottom: .3rem; color: currentColor; font-size: 1.05rem; }
+    .level-label p { margin: 0; color: var(--ink-soft); font-size: .78rem; }
+
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: .75rem;
+      padding-right: 1.2rem;
+    }
+
+    .course-card {
+      position: relative;
+      display: flex;
+      min-height: 12rem;
+      flex-direction: column;
+      padding: 1rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--paper-strong);
+      color: var(--ink);
+      box-shadow: var(--shadow-sm);
+      transition: transform .2s var(--ease), box-shadow .2s, border-color .2s;
+    }
+
+    .course-card:hover {
+      border-color: currentColor;
+      box-shadow: 0 12px 28px rgba(10, 35, 66, .09);
+      transform: translateY(-3px);
+    }
+
+    .course-card[hidden] { display: none; }
+    .course-number { margin-bottom: .8rem; color: currentColor; font-size: .76rem; font-weight: 850; }
+    .course-card h4 { margin-bottom: .55rem; font-size: 1rem; }
+    .course-card p { margin-bottom: .8rem; color: var(--ink-soft); font-size: .82rem; }
+    .course-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem .7rem;
+      margin-top: auto;
+      color: var(--ink-soft);
+      font-size: .72rem;
+      font-weight: 650;
+    }
+
+    .course-project {
+      margin-top: .75rem;
+      padding-top: .7rem;
+      border-top: 1px solid var(--line);
+      color: var(--ink-soft);
+      font-size: .74rem;
+    }
+
+    .map-empty {
+      padding: 2rem;
+      border: 1px dashed var(--line-strong);
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+
+    /* Curso introdutório */
+    .course-shell {
+      display: grid;
+      grid-template-columns: 18rem minmax(0, 1fr);
+      gap: clamp(1.3rem, 4vw, 3.5rem);
+      align-items: start;
+    }
+
+    .course-sidebar {
+      position: sticky;
+      top: calc(var(--header-h) + 1rem);
+      padding: 1.25rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--paper-strong);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .course-sidebar h3 { margin-bottom: .35rem; font-size: 1.08rem; }
+    .course-sidebar > p { color: var(--ink-soft); font-size: .82rem; }
+
+    .progress-track {
+      height: .55rem;
+      margin: 1rem 0 .55rem;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--line);
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--teal);
+      transition: width .35s var(--ease);
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      color: var(--ink-soft);
+      font-size: .76rem;
+      font-weight: 680;
+    }
+
+    .competence-list {
+      display: grid;
+      gap: .65rem;
+      padding: 1rem 0 0;
+      margin: 1rem 0 0;
+      border-top: 1px solid var(--line);
+      list-style: none;
+    }
+
+    .competence-list li {
+      display: grid;
+      grid-template-columns: 1.25rem 1fr;
+      gap: .55rem;
+      align-items: start;
+      color: var(--ink-soft);
+      font-size: .8rem;
+    }
+
+    .competence-list svg { width: 1rem; color: var(--teal); }
+
+    .module-list { display: grid; gap: .75rem; }
+
+    .module {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--paper-strong);
+    }
+
+    .module summary {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: .9rem;
+      align-items: center;
+      padding: 1.05rem 1.1rem;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .module summary::-webkit-details-marker { display: none; }
+
+    .module-index {
+      display: grid;
+      width: 2.35rem;
+      height: 2.35rem;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--mint);
+      color: var(--teal-strong);
+      font-size: .8rem;
+      font-weight: 820;
+    }
+
+    .module-title strong { display: block; font-size: .93rem; }
+    .module-title span { color: var(--ink-soft); font-size: .76rem; }
+
+    .chevron {
+      width: 1.1rem;
+      transition: transform .2s var(--ease);
+    }
+
+    .module[open] .chevron { transform: rotate(180deg); }
+
+    .module-body {
+      padding: 0 1.1rem 1.1rem 4.35rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .lesson-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      padding: .85rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .lesson-row:last-of-type { border-bottom: 0; }
+    .lesson-row strong { display: block; font-size: .84rem; }
+    .lesson-row span { color: var(--ink-soft); font-size: .74rem; }
+
+    .module-complete {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      margin-top: .85rem;
+      font-size: .8rem;
+      font-weight: 700;
+    }
+
+    .module-complete input {
+      width: 1.15rem;
+      height: 1.15rem;
+      accent-color: var(--teal);
+    }
+
+    .capstone {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1.5rem;
+      align-items: center;
+      margin-top: 1.25rem;
+      padding: 1.5rem;
+      border: 1px solid color-mix(in srgb, var(--teal) 42%, var(--line));
+      border-radius: var(--radius-lg);
+      background: var(--mint);
+    }
+
+    .capstone h3 { margin-bottom: .35rem; }
+    .capstone p { max-width: 65ch; margin: 0; color: var(--ink-soft); font-size: .88rem; }
+
+    /* Aula interativa */
+    .lesson-demo {
+      display: grid;
+      grid-template-columns: minmax(13rem, .34fr) minmax(0, 1fr);
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+
+    .lesson-nav {
+      display: grid;
+      align-content: start;
+      gap: .65rem;
+    }
+
+    .lesson-tab {
+      display: grid;
+      grid-template-columns: 2rem 1fr;
+      gap: .75rem;
+      align-items: center;
+      padding: .9rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--paper-strong);
+      color: var(--ink-soft);
+      text-align: left;
+      transition: border-color .18s, background .18s, transform .18s;
+    }
+
+    .lesson-tab:hover { border-color: var(--teal); transform: translateX(2px); }
+    .lesson-tab[aria-selected="true"] {
+      border-color: var(--teal);
+      background: var(--mint);
+      color: var(--ink);
+    }
+
+    .lesson-tab span:first-child {
+      display: grid;
+      width: 1.9rem;
+      height: 1.9rem;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--paper-strong);
+      color: var(--teal-strong);
+      font-size: .78rem;
+      font-weight: 820;
+    }
+
+    .lesson-tab strong { display: block; font-size: .83rem; }
+    .lesson-tab small { display: block; margin-top: .1rem; font-size: .7rem; }
+
+    .demo-canvas {
+      min-height: 30rem;
+      padding: clamp(1.15rem, 3vw, 2rem);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--paper-strong);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .demo-status {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: center;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .demo-status strong { font-size: 1rem; }
+
+    .quality-meter {
+      display: flex;
+      gap: .25rem;
+    }
+
+    .quality-meter span {
+      width: 1.9rem;
+      height: .38rem;
+      border-radius: 999px;
+      background: var(--line);
+    }
+
+    .quality-meter span.on { background: var(--teal); }
+
+    .conversation {
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .message {
+      min-height: 12.5rem;
+      padding: 1.1rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+    }
+
+    .message--user { background: var(--sky); }
+    .message--ai { background: var(--mint); }
+
+    .message-label {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      margin-bottom: .75rem;
+      color: var(--ink-soft);
+      font-size: .7rem;
+      font-weight: 820;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+
+    .message p {
+      margin-bottom: 0;
+      font-size: .86rem;
+      white-space: pre-line;
+    }
+
+    .demo-review {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: start;
+      margin-top: 1rem;
+      padding: 1rem;
+      border-left: 4px solid var(--coral);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      background: var(--coral-soft);
+    }
+
+    .demo-review strong { display: block; margin-bottom: .25rem; font-size: .84rem; }
+    .demo-review p { margin: 0; color: var(--ink-soft); font-size: .78rem; }
+
+    /* Laboratório */
+    .lab-shell {
+      display: grid;
+      grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
+      gap: 1.25rem;
+    }
+
+    .lab-panel,
+    .output-panel,
+    .diagnosis-card,
+    .result-card {
+      padding: clamp(1.2rem, 3vw, 1.75rem);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--paper-strong);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: start;
+      margin-bottom: 1.25rem;
+    }
+
+    .panel-head h3 { margin-bottom: .25rem; font-size: 1.15rem; }
+    .panel-head p { margin: 0; color: var(--ink-soft); font-size: .8rem; }
+
+    .form-grid { display: grid; gap: .9rem; }
+    .field { display: grid; gap: .38rem; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+
+    label,
+    legend {
+      color: var(--ink);
+      font-size: .78rem;
+      font-weight: 740;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: .68rem;
+      background: var(--paper);
+      padding: .72rem .8rem;
+      font-size: .84rem;
+      transition: border-color .18s, box-shadow .18s, background .18s;
+    }
+
+    textarea { min-height: 5.7rem; resize: vertical; }
+
+    input[type="text"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--teal);
+      outline: 0;
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--teal) 20%, transparent);
+    }
+
+    .check-field {
+      display: flex;
+      gap: .65rem;
+      align-items: start;
+      padding: .8rem;
+      border: 1px solid var(--line);
+      border-radius: .68rem;
+      background: var(--mint);
+    }
+
+    .check-field input {
+      width: 1.15rem;
+      height: 1.15rem;
+      margin-top: .12rem;
+      accent-color: var(--teal);
+    }
+
+    .check-field span { color: var(--ink-soft); font-size: .75rem; }
+    .form-actions { display: flex; flex-wrap: wrap; gap: .65rem; margin-top: .3rem; }
+
+    .output-panel {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      background: color-mix(in srgb, var(--mint) 48%, var(--paper-strong));
+    }
+
+    .prompt-output {
+      min-height: 26rem;
+      margin: 0;
+      padding: 1.1rem;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--paper-strong);
+      color: var(--ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .8rem;
+      line-height: 1.72;
+      white-space: pre-wrap;
+    }
+
+    .output-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: .75rem;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .output-hint { color: var(--ink-soft); font-size: .72rem; }
+
+    /* Diagnóstico */
+    .diagnosis-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(19rem, .7fr);
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    .quiz { display: grid; gap: 1.15rem; }
+    .question {
+      padding: 0 0 1rem;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .question:last-of-type { border-bottom: 0; }
+    .question legend { margin-bottom: .65rem; font-size: .88rem; }
+    .options { display: grid; gap: .5rem; }
+
+    .radio-option {
+      display: flex;
+      gap: .6rem;
+      align-items: start;
+      padding: .65rem .7rem;
+      border: 1px solid var(--line);
+      border-radius: .65rem;
+      color: var(--ink-soft);
+      font-size: .8rem;
+      font-weight: 570;
+      transition: border-color .18s, background .18s;
+    }
+
+    .radio-option:hover { border-color: var(--teal); background: var(--mint); }
+    .radio-option input { margin-top: .2rem; accent-color: var(--teal); }
+
+    .result-card {
+      position: sticky;
+      top: calc(var(--header-h) + 1rem);
+      min-height: 20rem;
+      background: var(--mint);
+    }
+
+    .result-placeholder {
+      display: grid;
+      min-height: 16rem;
+      place-items: center;
+      color: var(--ink-soft);
+      text-align: center;
+    }
+
+    .recommendation { display: none; }
+    .recommendation.show { display: block; animation: reveal .35s var(--ease); }
+    .recommendation h3 { margin-bottom: .45rem; font-size: 1.35rem; }
+    .recommendation .route-tag { color: var(--teal-strong); font-weight: 780; }
+    .recommendation p { color: var(--ink-soft); font-size: .86rem; }
+    .next-list { padding-left: 1.15rem; color: var(--ink-soft); font-size: .8rem; }
+
+    /* Capacidades */
+    .capability-shell {
+      display: grid;
+      grid-template-columns: 16rem minmax(0, 1fr);
+      gap: 1.25rem;
+    }
+
+    .capability-tabs {
+      display: grid;
+      align-content: start;
+      gap: .35rem;
+    }
+
+    .capability-tab {
+      display: flex;
+      justify-content: space-between;
+      gap: .75rem;
+      align-items: center;
+      min-height: 2.65rem;
+      padding: .58rem .75rem;
+      border: 1px solid transparent;
+      border-radius: .65rem;
+      background: transparent;
+      color: var(--ink-soft);
+      font-size: .82rem;
+      font-weight: 680;
+      text-align: left;
+    }
+
+    .capability-tab:hover { background: var(--paper-strong); color: var(--ink); }
+    .capability-tab[aria-selected="true"] {
+      border-color: var(--teal);
+      background: var(--paper-strong);
+      color: var(--teal-strong);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .capability-tab svg { width: .9rem; height: .9rem; }
+
+    .capability-panel {
+      min-height: 28rem;
+      padding: clamp(1.3rem, 3vw, 2rem);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--paper-strong);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .capability-panel h3 { margin-bottom: .45rem; font-size: 1.55rem; }
+    .capability-panel > p { max-width: 68ch; color: var(--ink-soft); }
+
+    .capability-facts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .8rem;
+      margin-top: 1.25rem;
+    }
+
+    .fact {
+      min-height: 9.2rem;
+      padding: 1rem;
+      border-top: 3px solid var(--teal);
+      background: var(--mint);
+    }
+
+    .fact:nth-child(2) { border-color: var(--blue); background: var(--sky); }
+    .fact:nth-child(3) { border-color: var(--coral); background: var(--coral-soft); }
+    .fact:nth-child(4) { border-color: var(--violet); background: var(--lavender); }
+    .fact h4 { margin-bottom: .5rem; font-size: .86rem; }
+    .fact p { margin: 0; color: var(--ink-soft); font-size: .79rem; }
+
+    /* Uso responsável */
+    .responsible-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .8rem;
+    }
+
+    .risk {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--paper-strong);
+    }
+
+    .risk summary {
+      display: grid;
+      grid-template-columns: 2.15rem 1fr auto;
+      gap: .75rem;
+      align-items: center;
+      padding: 1rem;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .risk summary::-webkit-details-marker { display: none; }
+    .risk-icon {
+      display: grid;
+      width: 2.05rem;
+      height: 2.05rem;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--coral-soft);
+      color: var(--coral);
+      font-weight: 850;
+    }
+
+    .risk summary strong { font-size: .87rem; }
+    .risk-body {
+      padding: 0 1rem 1rem 3.9rem;
+      color: var(--ink-soft);
+      font-size: .79rem;
+    }
+
+    .risk-body p { margin-bottom: .55rem; }
+    .risk-body strong { color: var(--ink); }
+
+    .human-rule {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1rem;
+      align-items: start;
+      margin-top: 1.3rem;
+      padding: 1.2rem;
+      border-left: 5px solid var(--teal);
+      background: var(--mint);
+    }
+
+    .human-rule svg { width: 1.5rem; color: var(--teal); }
+    .human-rule h3 { margin-bottom: .25rem; font-size: 1rem; }
+    .human-rule p { margin: 0; color: var(--ink-soft); font-size: .82rem; }
+
+    /* Plano do criador */
+    .creator-shell {
+      display: grid;
+      grid-template-columns: .7fr 1.3fr;
+      gap: clamp(2rem, 6vw, 5rem);
+      align-items: start;
+    }
+
+    .creator-copy {
+      position: sticky;
+      top: calc(var(--header-h) + 1.2rem);
+    }
+
+    .creator-copy h2 {
+      margin-bottom: 1rem;
+      font-size: clamp(2.1rem, 4.5vw, 3.8rem);
+      letter-spacing: -.045em;
+    }
+
+    .creator-copy p { color: var(--ink-soft); }
+
+    .creator-timeline {
+      position: relative;
+      display: grid;
+      gap: 0;
+    }
+
+    .creator-timeline::before {
+      content: "";
+      position: absolute;
+      top: 1.4rem;
+      bottom: 1.4rem;
+      left: 1.35rem;
+      border-left: 2px dashed color-mix(in srgb, var(--teal) 55%, var(--line));
+    }
+
+    .creator-step {
+      position: relative;
+      display: grid;
+      grid-template-columns: 2.8rem 1fr;
+      gap: 1rem;
+      padding: 0 0 1.3rem;
+    }
+
+    .creator-step:last-child { padding-bottom: 0; }
+    .creator-number {
+      z-index: 1;
+      display: grid;
+      width: 2.8rem;
+      height: 2.8rem;
+      place-items: center;
+      border: 2px solid var(--teal);
+      border-radius: 50%;
+      background: var(--paper);
+      color: var(--teal-strong);
+      font-size: .8rem;
+      font-weight: 850;
+    }
+
+    .creator-card {
+      padding: 1rem 1.1rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--paper-strong);
+    }
+
+    .creator-card h3 { margin-bottom: .3rem; font-size: .98rem; }
+    .creator-card p { margin-bottom: .5rem; color: var(--ink-soft); font-size: .8rem; }
+    .creator-card strong { font-size: .75rem; }
+
+    /* FAQ e rodapé */
+    .faq-list {
+      width: min(100%, 52rem);
+      margin-inline: auto;
+      border-top: 1px solid var(--line);
+    }
+
+    .faq {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .faq summary {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 1.1rem 0;
+      cursor: pointer;
+      list-style: none;
+      font-weight: 760;
+    }
+
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq p { padding: 0 2.5rem 1.15rem 0; margin: 0; color: var(--ink-soft); font-size: .88rem; }
+    .faq[open] .chevron { transform: rotate(180deg); }
+
+    .site-footer {
+      padding: 2.5rem 0;
+      border-top: 1px solid var(--line);
+      background: var(--paper-strong);
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .footer-copy { color: var(--ink-soft); font-size: .78rem; }
+    .footer-copy strong { color: var(--ink); }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 1rem; }
+    .footer-links a { color: var(--ink-soft); font-size: .78rem; font-weight: 680; }
+
+    .back-to-top {
+      position: fixed;
+      z-index: 80;
+      right: 1rem;
+      bottom: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(.6rem);
+      transition: opacity .2s, transform .2s;
+    }
+
+    .back-to-top.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 200;
+      left: 50%;
+      bottom: 1.25rem;
+      max-width: calc(100% - 2rem);
+      padding: .75rem 1rem;
+      border-radius: .75rem;
+      background: var(--ink);
+      color: var(--paper);
+      font-size: .82rem;
+      font-weight: 700;
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 1rem);
+      transition: opacity .2s, transform .2s;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(.5rem); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsividade */
+    @media (max-width: 980px) {
+      .section-head,
+      .hero-grid,
+      .thesis-grid,
+      .creator-shell { grid-template-columns: 1fr; }
+
+      .hero { min-height: auto; }
+      .hero h1 { max-width: 15ch; }
+      .notebook { width: min(100%, 35rem); margin-inline: auto; }
+      .course-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .course-shell { grid-template-columns: 1fr; }
+      .course-sidebar,
+      .creator-copy { position: static; }
+      .course-sidebar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        align-items: start;
+      }
+      .competence-list { margin: 0; border-top: 0; border-left: 1px solid var(--line); padding: 0 0 0 1rem; }
+      .creator-copy { max-width: 46rem; }
+    }
+
+    @media (max-width: 780px) {
+      :root { --header-h: 4.25rem; }
+
+      .nav-links {
+        position: fixed;
+        inset: var(--header-h) 0 auto 0;
+        display: grid;
+        max-height: calc(100svh - var(--header-h));
+        gap: 0;
+        padding: 1rem;
+        overflow: auto;
+        border-bottom: 1px solid var(--line);
+        background: var(--paper-strong);
+        box-shadow: var(--shadow-md);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-.6rem);
+        transition: opacity .2s, transform .2s, visibility .2s;
+      }
+
+      .nav-links.open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .nav-links a { padding: .85rem; border-bottom: 1px solid var(--line); }
+      .menu-toggle { display: inline-grid; }
+      .nav-actions .btn { display: none; }
+
+      .level { grid-template-columns: 1fr; }
+      .level-label { border-right: 0; border-bottom: 1px solid var(--line); }
+      .course-grid { padding-right: 1rem; }
+      .level::after { top: 1.75rem; }
+
+      .lesson-demo,
+      .lab-shell,
+      .diagnosis-shell,
+      .capability-shell { grid-template-columns: 1fr; }
+
+      .lesson-nav {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .lesson-tab { grid-template-columns: 1fr; }
+      .lesson-tab span:first-child { margin-bottom: .15rem; }
+      .result-card { position: static; }
+
+      .capability-tabs {
+        grid-template-columns: repeat(5, minmax(8rem, 1fr));
+        padding-bottom: .4rem;
+        overflow-x: auto;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container { width: min(calc(100% - 1.25rem), var(--container)); }
+      .section { padding-block: 4rem; }
+      .hero { padding-block: 3.2rem 4.2rem; }
+      .hero h1 { font-size: clamp(2.75rem, 14vw, 4.3rem); }
+      .hero-principles { grid-template-columns: 1fr; }
+      .hero-actions .btn { width: 100%; }
+      .notebook { padding: 1.3rem 1.15rem; }
+      .note-label, .route-list { margin-left: 1.65rem; }
+
+      .course-grid,
+      .course-sidebar,
+      .conversation,
+      .capability-facts,
+      .responsible-grid,
+      .field-row { grid-template-columns: 1fr; }
+
+      .competence-list { padding: 1rem 0 0; margin: 0; border-left: 0; border-top: 1px solid var(--line); }
+      .module summary { grid-template-columns: auto 1fr auto; padding-inline: .85rem; }
+      .module-body { padding-inline: .85rem; }
+      .capstone { grid-template-columns: 1fr; }
+      .lesson-nav { grid-template-columns: 1fr; }
+      .lesson-tab { grid-template-columns: 2rem 1fr; }
+      .demo-canvas { padding: .9rem; }
+      .conversation { gap: .7rem; }
+      .message { min-height: auto; }
+      .output-actions,
+      .footer-grid { align-items: flex-start; flex-direction: column; }
+      .prompt-output { min-height: 20rem; }
+      .creator-step { grid-template-columns: 2.5rem 1fr; gap: .75rem; }
+      .creator-number { width: 2.5rem; height: 2.5rem; }
+      .creator-timeline::before { left: 1.2rem; }
+      .risk-body { padding-left: 1rem; }
+      .footer-grid { display: flex; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+
+    @media print {
+      .site-header,
+      .back-to-top,
+      .toast,
+      .hero-actions,
+      .filter-bar,
+      .form-actions { display: none !important; }
+      body { background: #fff; color: #000; }
+      .section { padding-block: 2rem; break-inside: avoid; }
+      .course-sidebar,
+      .creator-copy,
+      .result-card { position: static; }
+    }
+  </style>
 </head>
 <body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo principal</a>
 
-<header class="header">
-  <div class="header-left">
-    <h1>Torre TE311</h1>
-    <p>Controle BLE — Reservatórios</p>
-  </div>
-  <button class="conn-pill" id="connBtn" onclick="toggleConnect()">
-    <span class="dot" id="dot"></span>
-    <span id="connLabel">Conectar</span>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="#inicio" aria-label="Curso IA — voltar ao início">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span data-project-name="">Curso IA</span>
+      </a>
+
+      <nav class="nav-links" id="nav-links" aria-label="Navegação principal">
+        <a href="#visao">Visão</a>
+        <a href="#formacao">Formação</a>
+        <a href="#curso">Curso inicial</a>
+        <a href="#aula">Aula</a>
+        <a href="#laboratorio">Laboratório</a>
+        <a href="#responsavel">Uso responsável</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="icon-button" id="theme-toggle" type="button" aria-label="Ativar modo claro" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"></path></svg></button>
+        <a class="btn" href="#diagnostico">Descobrir minha trilha</a>
+        <button class="icon-button menu-toggle" id="menu-toggle" type="button" aria-controls="nav-links" aria-expanded="false" aria-label="Abrir menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section class="hero section" id="inicio" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <h1 id="hero-title">Inteligência artificial, com método e critério.</h1>
+          <p>Aprenda a transformar problemas reais em resultados úteis — sabendo pedir, revisar, verificar e decidir.</p>
+          <div class="hero-actions">
+            <a class="btn" href="#formacao">
+              Explorar a formação
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5"></path></svg>
+            </a>
+            <a class="btn btn--secondary" href="#aula">Testar uma aula</a>
+          </div>
+          <ul class="hero-principles" aria-label="Princípios da formação">
+            <li><strong>Problemas primeiro</strong>Comece pelo que precisa resolver.</li>
+            <li><strong>Resultados verificáveis</strong>Uma resposta bonita ainda pode estar errada.</li>
+            <li><strong>Autonomia humana</strong>A IA apoia; a responsabilidade continua sua.</li>
+          </ul>
+        </div>
+
+        <div class="notebook" aria-label="Resumo visual do método ROTA">
+          <span class="note-label">Método ROTA</span>
+          <ol class="route-list">
+            <li><div><strong>Reconhecer</strong><span>o problema, o risco e o que “bom” significa</span></div></li>
+            <li><div><strong>Orientar</strong><span>a IA com objetivo, contexto e restrições</span></div></li>
+            <li><div><strong>Testar</strong><span>o resultado, revisar e verificar evidências</span></div></li>
+            <li><div><strong>Aplicar</strong><span>com decisão humana e registro do processo</span></div></li>
+          </ol>
+          <svg class="route-line" viewBox="0 0 560 60" fill="none" aria-hidden="true">
+            <path d="M4 30C80 2 124 58 202 30S322 4 396 30s104 12 160-8" stroke="currentColor" stroke-width="2" stroke-dasharray="7 8" stroke-linecap="round"></path>
+            <circle cx="556" cy="22" r="5" fill="currentColor"></circle>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--mint" id="visao" aria-labelledby="visao-title">
+      <div class="container thesis-grid">
+        <div>
+          <span class="chapter" data-number="01">Visão do projeto</span>
+          <h2 class="thesis" id="visao-title">Não é um curso de botões. É uma formação para pensar e trabalhar com IA.</h2>
+          <p class="thesis-copy">Ferramentas mudam. O que permanece é a capacidade de entender uma tarefa, avaliar risco, escolher uma abordagem, orientar um sistema, verificar a saída e responder pelo que será usado.</p>
+        </div>
+
+        <div class="method" aria-label="Etapas do método ROTA">
+          <article class="method-step">
+            <span class="method-letter">R</span>
+            <div><h3>Reconhecer problema e risco</h3><p>Separar criação, pesquisa, análise, automação e decisão. Nem toda tarefa pede IA.</p></div>
+          </article>
+          <article class="method-step">
+            <span class="method-letter">O</span>
+            <div><h3>Orientar com um bom briefing</h3><p>Definir objetivo, contexto, público, formato, limites e critérios de qualidade.</p></div>
+          </article>
+          <article class="method-step">
+            <span class="method-letter">T</span>
+            <div><h3>Testar, revisar e verificar</h3><p>Criticar a primeira resposta, buscar evidências e localizar incertezas antes de confiar.</p></div>
+          </article>
+          <article class="method-step">
+            <span class="method-letter">A</span>
+            <div><h3>Aplicar com decisão humana</h3><p>Adaptar ao contexto real, proteger dados e manter uma pessoa responsável pelo resultado.</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="formacao" aria-labelledby="formacao-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="chapter" data-number="02">Mapa da formação</span>
+            <h2 class="section-title" id="formacao-title">Uma base comum, várias rotas de aplicação.</h2>
+          </div>
+          <p class="section-lead">Todos começam pelo curso introdutório. Depois, cada pessoa aprofunda a área em que precisa produzir resultados — sem repetir fundamentos a cada nova ferramenta.</p>
+        </div>
+
+        <div class="filter-bar" role="group" aria-label="Filtrar cursos por interesse">
+          <button class="filter" type="button" data-filter="todos" aria-pressed="true">Todos</button>
+          <button class="filter" type="button" data-filter="trabalho" aria-pressed="false">Trabalho</button>
+          <button class="filter" type="button" data-filter="estudo" aria-pressed="false">Estudo e ensino</button>
+          <button class="filter" type="button" data-filter="negocios" aria-pressed="false">Negócios</button>
+          <button class="filter" type="button" data-filter="criacao" aria-pressed="false">Criação</button>
+          <button class="filter" type="button" data-filter="tecnico" aria-pressed="false">Técnico</button>
+        </div>
+
+        <div class="learning-map" id="learning-map" aria-live="polite"><section class="level level--beginner" aria-labelledby="level-beginner"><div class="level-label"><h3 id="level-beginner">Iniciante</h3><p>Fundamentos e método</p></div><div class="course-grid"><article class="course-card"><span class="course-number">CURSO 01</span><h4>IA na Prática</h4><p>Entender, orientar, avaliar e aplicar IA em tarefas reais.</p><div class="course-meta"><span>12 h estimadas</span><span>Pré: Nenhum</span></div><div class="course-project"><strong>Projeto:</strong> Dossiê antes/depois de um fluxo real.</div></article></div></section><section class="level level--intermediate" aria-labelledby="level-intermediate"><div class="level-label"><h3 id="level-intermediate">Intermediário</h3><p>Aplicação em contextos</p></div><div class="course-grid"><article class="course-card"><span class="course-number">CURSO 02</span><h4>Produtividade no Trabalho</h4><p>Planejar, comunicar, organizar e documentar com revisão humana.</p><div class="course-meta"><span>8 h estimadas</span><span>Pré: Curso de entrada</span></div><div class="course-project"><strong>Projeto:</strong> Sistema pessoal de três fluxos recorrentes.</div></article><article class="course-card"><span class="course-number">CURSO 03</span><h4>Estudos e Ensino</h4><p>Aprender, explicar, praticar e avaliar sem terceirizar o raciocínio.</p><div class="course-meta"><span>9 h estimadas</span><span>Pré: Curso de entrada</span></div><div class="course-project"><strong>Projeto:</strong> Plano de aprendizagem com evidências e autoavaliação.</div></article><article class="course-card"><span class="course-number">CURSO 04</span><h4>Administração, Documentos e Dados</h4><p>Extrair, comparar, redigir e analisar materiais com rastreabilidade.</p><div class="course-meta"><span>10 h estimadas</span><span>Pré: Curso de entrada</span></div><div class="course-project"><strong>Projeto:</strong> Kit operacional de documento, planilha e relatório.</div></article><article class="course-card"><span class="course-number">CURSO 05</span><h4>Pequenos Negócios e Vendas</h4><p>Mapear atendimento, ofertas e rotinas sem perder contexto humano.</p><div class="course-meta"><span>10 h estimadas</span><span>Pré: Curso de entrada</span></div><div class="course-project"><strong>Projeto:</strong> Fluxo de atendimento com limites e indicadores.</div></article><article class="course-card"><span class="course-number">CURSO 06</span><h4>Conteúdo e Marketing</h4><p>Pesquisar, criar, adaptar e revisar conteúdo orientado por estratégia.</p><div class="course-meta"><span>10 h estimadas</span><span>Pré: Curso de entrada</span></div><div class="course-project"><strong>Projeto:</strong> Campanha pequena com briefing, peças e revisão.</div></article><article class="course-card"><span class="course-number">CURSO 07</span><h4>Imagem, Áudio e Vídeo</h4><p>Criar mídia com direção, consentimento, direitos e controle de qualidade.</p><div class="course-meta"><span>9 h estimadas</span><span>Pré: Curso de entrada</span></div><div class="course-project"><strong>Projeto:</strong> Kit multimídia coerente para um caso real.</div></article><article class="course-card"><span class="course-number">CURSO 08</span><h4>Engenharia, Indústria e Código</h4><p>Usar IA como apoio técnico com testes, documentação e segurança.</p><div class="course-meta"><span>12 h estimadas</span><span>Pré: Curso de entrada + base da área</span></div><div class="course-project"><strong>Projeto:</strong> Protótipo técnico validado e documentado.</div></article></div></section><section class="level level--advanced" aria-labelledby="level-advanced"><div class="level-label"><h3 id="level-advanced">Avançado</h3><p>Sistemas, estratégia e impacto</p></div><div class="course-grid"><article class="course-card"><span class="course-number">CURSO 09</span><h4>Automações e Agentes</h4><p>Orquestrar ferramentas, dados e decisões com pontos de controle.</p><div class="course-meta"><span>14 h estimadas</span><span>Pré: Uma trilha intermediária</span></div><div class="course-project"><strong>Projeto:</strong> Assistente especializado com supervisão e recuperação de falhas.</div></article><article class="course-card"><span class="course-number">CURSO 10</span><h4>Estratégia, Governança e Adoção</h4><p>Implantar IA em equipes com política, métricas, riscos e formação.</p><div class="course-meta"><span>9 h estimadas</span><span>Pré: Experiência prática</span></div><div class="course-project"><strong>Projeto:</strong> Plano de adoção responsável para uma operação.</div></article></div></section></div>
+        <div class="map-empty" id="map-empty" hidden="">Nenhum curso corresponde a este filtro.</div>
+      </div>
+    </section>
+
+    <section class="section section--sky" id="curso" aria-labelledby="curso-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="chapter" data-number="03">Curso de entrada</span>
+            <h2 class="section-title" id="curso-title">IA na Prática: do primeiro pedido à produtividade real.</h2>
+          </div>
+          <p class="section-lead">Formação estimada em 12 horas, com 8 módulos, atividades úteis desde a primeira aula e um projeto final que documenta ganho, limites e verificação.</p>
+        </div>
+
+        <div class="course-shell">
+          <aside class="course-sidebar" aria-label="Progresso simulado do curso">
+            <div>
+              <p class="eyebrow">Seu progresso neste navegador</p>
+              <h3>Experimente marcar módulos</h3>
+              <p>O progresso é apenas uma simulação local e não representa matrícula ou certificação.</p>
+              <div class="progress-track" aria-hidden="true" aria-label="Progresso simulado: 0%"><div class="progress-bar" id="course-progress" style="width: 0%;"></div></div>
+              <div class="progress-text"><span id="progress-label">0 de 8 módulos</span><span id="progress-percent">0%</span></div>
+            </div>
+            <ul class="competence-list">
+              <li>
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 10 4 4 8-9"></path></svg>
+                Escolher quando usar IA — e quando não usar.
+              </li>
+              <li>
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 10 4 4 8-9"></path></svg>
+                Criar pedidos claros e iterar com método.
+              </li>
+              <li>
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 10 4 4 8-9"></path></svg>
+                Pesquisar, comparar e verificar respostas.
+              </li>
+              <li>
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 10 4 4 8-9"></path></svg>
+                Proteger dados e manter revisão humana.
+              </li>
+            </ul>
+          </aside>
+
+          <div>
+            <div class="module-list" id="module-list"><details class="module" open=""><summary><span class="module-index">01</span><span class="module-title"><strong>Começar pelo problema</strong><span>55 min · 2 aulas</span></span><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary><div class="module-body"><div class="lesson-row"><div><strong>Diagnóstico: onde a IA pode ajudar?</strong><span>25 min · mapa de tarefas e riscos</span></div></div><div class="lesson-row"><div><strong>Cinco minutos para decidir não usar IA</strong><span>30 min · custo, impacto e reversibilidade</span></div></div><label class="module-complete"><input type="checkbox" data-module="0"> Marcar módulo como concluído nesta simulação</label></div></details><details class="module"><summary><span class="module-index">02</span><span class="module-title"><strong>Como a IA responde — e erra</strong><span>70 min · 2 aulas</span></span><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary><div class="module-body"><div class="lesson-row"><div><strong>Previsão, contexto e variação de respostas</strong><span>35 min · modelo mental intuitivo</span></div></div><div class="lesson-row"><div><strong>Fluência não é verdade</strong><span>35 min · informações inventadas e incerteza</span></div></div><label class="module-complete"><input type="checkbox" data-module="1"> Marcar módulo como concluído nesta simulação</label></div></details><details class="module"><summary><span class="module-index">03</span><span class="module-title"><strong>Pedidos que orientam</strong><span>105 min · 3 aulas</span></span><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary><div class="module-body"><div class="lesson-row"><div><strong>Do pedido vago ao briefing útil</strong><span>40 min · objetivo, contexto e formato</span></div></div><div class="lesson-row"><div><strong>Exemplos, restrições e critérios</strong><span>35 min · controle de qualidade</span></div></div><div class="lesson-row"><div><strong>Conversar, criticar e lapidar</strong><span>30 min · iteração consciente</span></div></div><label class="module-complete"><input type="checkbox" data-module="2"> Marcar módulo como concluído nesta simulação</label></div></details><details class="module"><summary><span class="module-index">04</span><span class="module-title"><strong>Pesquisa e verificação</strong><span>90 min · 2 aulas</span></span><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary><div class="module-body"><div class="lesson-row"><div><strong>Pesquisar não é apenas gerar texto</strong><span>40 min · busca, fonte e atualidade</span></div></div><div class="lesson-row"><div><strong>Protocolo de verificação</strong><span>50 min · afirmações, evidências e triangulação</span></div></div><label class="module-complete"><input type="checkbox" data-module="3"> Marcar módulo como concluído nesta simulação</label></div></details><details class="module"><summary><span class="module-index">05</span><span class="module-title"><strong>Documentos, escrita e dados</strong><span>120 min · 3 aulas</span></span><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary><div class="module-body"><div class="lesson-row"><div><strong>Ler, extrair e comparar documentos</strong><span>40 min · rastreabilidade</span></div></div><div class="lesson-row"><div><strong>Escrever sem perder autoria</strong><span>35 min · e-mails e relatórios</span></div></div><div class="lesson-row"><div><strong>Tabelas e dados sem falsa precisão</strong><span>45 min · cálculos e validação</span></div></div><label class="module-complete"><input type="checkbox" data-module="4"> Marcar módulo como concluído nesta simulação</label></div></details><details class="module"><summary><span class="module-index">06</span><span class="module-title"><strong>Fluxos de produtividade</strong><span>85 min · 2 aulas</span></span><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary><div class="module-body"><div class="lesson-row"><div><strong>De tarefa isolada a fluxo repetível</strong><span>45 min · etapas e checkpoints</span></div></div><div class="lesson-row"><div><strong>Escolher a categoria de ferramenta</strong><span>40 min · capacidade, custo e risco</span></div></div><label class="module-complete"><input type="checkbox" data-module="5"> Marcar módulo como concluído nesta simulação</label></div></details><details class="module"><summary><span class="module-index">07</span><span class="module-title"><strong>Multimodal e uso responsável</strong><span>95 min · 2 aulas</span></span><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary><div class="module-body"><div class="lesson-row"><div><strong>Imagem, áudio e vídeo com direção</strong><span>40 min · briefing e revisão</span></div></div><div class="lesson-row"><div><strong>Privacidade, direitos, vieses e deepfakes</strong><span>55 min · prevenção aplicada</span></div></div><label class="module-complete"><input type="checkbox" data-module="6"> Marcar módulo como concluído nesta simulação</label></div></details><details class="module"><summary><span class="module-index">08</span><span class="module-title"><strong>Projeto final e autonomia</strong><span>100 min · 2 aulas</span></span><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary><div class="module-body"><div class="lesson-row"><div><strong>Construir e testar o fluxo real</strong><span>65 min · método ROTA completo</span></div></div><div class="lesson-row"><div><strong>Retrospectiva e plano de evolução</strong><span>35 min · limites e próximos passos</span></div></div><label class="module-complete"><input type="checkbox" data-module="7"> Marcar módulo como concluído nesta simulação</label></div></details></div>
+            <article class="capstone">
+              <div>
+                <p class="eyebrow">Projeto de conclusão</p>
+                <h3>Dossiê de um fluxo real: antes, com IA e depois da verificação</h3>
+                <p>O aluno escolhe uma tarefa recorrente, registra o processo atual, aplica o método ROTA, mede tempo e qualidade com critérios simples, documenta riscos e entrega um fluxo reutilizável com pontos de revisão humana.</p>
+              </div>
+              <a class="btn btn--secondary" href="#laboratorio">Preparar meu pedido</a>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="aula" aria-labelledby="aula-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="chapter" data-number="04">Aula interativa</span>
+            <h2 class="section-title" id="aula-title">Do pedido vago ao processo confiável.</h2>
+          </div>
+          <p class="section-lead">Clique nas três etapas. A atividade mostra por que “escrever mais” não basta: contexto melhora utilidade; revisão e verificação melhoram confiabilidade.</p>
+        </div>
+
+        <div class="lesson-demo">
+          <div class="lesson-nav" role="tablist" aria-label="Etapas da demonstração">
+            <button class="lesson-tab" id="lesson-tab-0" type="button" role="tab" aria-selected="true" aria-controls="lesson-panel" data-stage="0" tabindex="0">
+              <span>1</span><span><strong>Pedido vago</strong><small>Pouca direção</small></span>
+            </button>
+            <button class="lesson-tab" id="lesson-tab-1" type="button" role="tab" aria-selected="false" aria-controls="lesson-panel" data-stage="1" tabindex="-1">
+              <span>2</span><span><strong>Com contexto</strong><small>Mais útil</small></span>
+            </button>
+            <button class="lesson-tab" id="lesson-tab-2" type="button" role="tab" aria-selected="false" aria-controls="lesson-panel" data-stage="2" tabindex="-1">
+              <span>3</span><span><strong>Com verificação</strong><small>Mais confiável</small></span>
+            </button>
+          </div>
+
+          <div class="demo-canvas" id="lesson-panel" role="tabpanel" aria-labelledby="lesson-tab-0" tabindex="0">
+            <div class="demo-status">
+              <strong id="demo-title">Etapa 1 · Pedido vago</strong>
+              <div class="quality-meter" id="quality-meter" role="img" aria-label="Qualidade pedagógica estimada: 1 de 3">
+                <span class="on"></span><span></span><span></span>
+              </div>
+            </div>
+            <div class="conversation">
+              <article class="message message--user">
+                <div class="message-label">
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10" cy="6" r="3"></circle><path d="M4 17c.5-4 2.5-6 6-6s5.5 2 6 6"></path></svg>
+                  Seu pedido
+                </div>
+                <p id="demo-prompt">Escreva um e-mail cobrando os documentos.</p>
+              </article>
+              <article class="message message--ai">
+                <div class="message-label">
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="4" width="14" height="12" rx="3"></rect><path d="M7 9h.01M13 9h.01M7 13h6"></path></svg>
+                  Saída provável
+                </div>
+                <p id="demo-response">Assunto: Documentos pendentes
+
+Prezado(a), solicito o envio dos documentos pendentes o mais breve possível. Agradeço pela atenção.</p>
+              </article>
+            </div>
+            <div class="demo-review">
+              <div>
+                <strong id="demo-review-title">Parece correto, mas quase tudo ficou indefinido.</strong>
+                <p id="demo-review-text">A IA não sabe quem recebe, quais documentos faltam, qual é o prazo real, o tom da relação nem se pode afirmar urgência.</p>
+              </div>
+              <button class="btn btn--quiet" id="demo-next" type="button">Próxima etapa</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--mint" id="laboratorio" aria-labelledby="lab-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="chapter" data-number="05">Laboratório de pedidos</span>
+            <h2 class="section-title" id="lab-title">Monte um briefing que sobreviva à troca de ferramenta.</h2>
+          </div>
+          <p class="section-lead">O construtor organiza intenção, contexto, formato e critérios. Ele não produz um “prompt mágico”; produz uma especificação que você ainda deve revisar.</p>
+        </div>
+
+        <div class="lab-shell">
+          <form class="lab-panel" id="prompt-form">
+            <div class="panel-head">
+              <div><h3>Elementos do pedido</h3><p>Preencha apenas o que for relevante para sua tarefa.</p></div>
+            </div>
+            <div class="form-grid">
+              <div class="field">
+                <label for="prompt-objective">Objetivo *</label>
+                <input id="prompt-objective" name="objective" type="text" required="" placeholder="Ex.: criar um resumo executivo de uma reunião">
+              </div>
+              <div class="field">
+                <label for="prompt-context">Contexto</label>
+                <textarea id="prompt-context" name="context" placeholder="Que situação, material ou informação a IA precisa conhecer?"></textarea>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="prompt-audience">Público</label>
+                  <input id="prompt-audience" name="audience" type="text" placeholder="Ex.: gerente não técnico">
+                </div>
+                <div class="field">
+                  <label for="prompt-format">Formato da resposta</label>
+                  <select id="prompt-format" name="format">
+                    <option value="">Escolher formato</option>
+                    <option>Lista priorizada</option>
+                    <option>Tabela comparativa</option>
+                    <option>E-mail pronto para revisar</option>
+                    <option>Plano passo a passo</option>
+                    <option>Resumo executivo</option>
+                    <option>Perguntas e respostas</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="prompt-restrictions">Restrições e limites</label>
+                <textarea id="prompt-restrictions" name="restrictions" placeholder="Ex.: até 300 palavras; não inventar dados; marcar o que faltar"></textarea>
+              </div>
+              <div class="field">
+                <label for="prompt-quality">Critérios de qualidade</label>
+                <input id="prompt-quality" name="quality" type="text" placeholder="Ex.: clareza, precisão, tom cordial e próximos passos">
+              </div>
+              <label class="check-field" for="prompt-sources">
+                <input id="prompt-sources" name="sources" type="checkbox">
+                <span><strong>Solicitar evidências e verificação.</strong><br>Peça fontes quando a tarefa envolver fatos atuais ou afirmações verificáveis e exija que incertezas sejam sinalizadas.</span>
+              </label>
+              <div class="form-actions">
+                <button class="btn" type="submit">Montar pedido</button>
+                <button class="btn btn--secondary" id="prompt-reset" type="reset">Limpar</button>
+              </div>
+            </div>
+          </form>
+
+          <section class="output-panel" aria-labelledby="output-title">
+            <div class="panel-head">
+              <div><h3 id="output-title">Seu pedido estruturado</h3><p>Edite antes de usar. Campos vazios não aparecem.</p></div>
+            </div>
+            <pre class="prompt-output" id="prompt-output" tabindex="0">Preencha ao menos o objetivo e selecione “Montar pedido”.</pre>
+            <div class="output-actions">
+              <span class="output-hint" id="prompt-status">Nenhum pedido montado.</span>
+              <button class="btn btn--secondary" id="copy-prompt" type="button" disabled="">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="6" y="6" width="10" height="10" rx="2"></rect><path d="M13 6V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"></path></svg>
+                Copiar pedido
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="diagnostico" aria-labelledby="diag-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="chapter" data-number="06">Diagnóstico inicial</span>
+            <h2 class="section-title" id="diag-title">Qual é o seu melhor ponto de partida?</h2>
+          </div>
+          <p class="section-lead">Quatro perguntas geram uma recomendação local. O resultado orienta a navegação; não mede inteligência, competência profissional nem garante domínio.</p>
+        </div>
+
+        <div class="diagnosis-shell">
+          <form class="diagnosis-card quiz" id="diagnosis-form">
+            <fieldset class="question">
+              <legend>1. Como você usa IA hoje?</legend>
+              <div class="options">
+                <label class="radio-option"><input type="radio" name="experience" value="0" required=""> Nunca usei ou tenho receio de começar.</label>
+                <label class="radio-option"><input type="radio" name="experience" value="1"> Faço perguntas simples de vez em quando.</label>
+                <label class="radio-option"><input type="radio" name="experience" value="2"> Já aplico em tarefas e costumo melhorar os pedidos.</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="question">
+              <legend>2. Onde você mais quer aplicar IA?</legend>
+              <div class="options">
+                <label class="radio-option"><input type="radio" name="interest" value="trabalho" required=""> Trabalho, produtividade e documentos.</label>
+                <label class="radio-option"><input type="radio" name="interest" value="estudo"> Estudos ou ensino.</label>
+                <label class="radio-option"><input type="radio" name="interest" value="negocios"> Negócios, atendimento ou vendas.</label>
+                <label class="radio-option"><input type="radio" name="interest" value="criacao"> Conteúdo, imagem, áudio ou vídeo.</label>
+                <label class="radio-option"><input type="radio" name="interest" value="tecnico"> Programação, engenharia ou indústria.</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="question">
+              <legend>3. O que você faz quando a resposta parece convincente?</legend>
+              <div class="options">
+                <label class="radio-option"><input type="radio" name="verification" value="0" required=""> Normalmente aceito e uso.</label>
+                <label class="radio-option"><input type="radio" name="verification" value="1"> Releio e corrijo o que percebo.</label>
+                <label class="radio-option"><input type="radio" name="verification" value="2"> Verifico fatos, fontes e pressupostos importantes.</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="question">
+              <legend>4. Como lida com dados pessoais ou profissionais?</legend>
+              <div class="options">
+                <label class="radio-option"><input type="radio" name="privacy" value="0" required=""> Nunca pensei muito nisso.</label>
+                <label class="radio-option"><input type="radio" name="privacy" value="1"> Evito alguns dados, mas não tenho um critério.</label>
+                <label class="radio-option"><input type="radio" name="privacy" value="2"> Classifico o risco, anonimizo e sigo regras do contexto.</label>
+              </div>
+            </fieldset>
+            <button class="btn" type="submit">Ver recomendação</button>
+          </form>
+
+          <aside class="result-card" aria-live="polite" aria-label="Resultado do diagnóstico">
+            <div class="result-placeholder" id="result-placeholder">
+              <p>Responda às quatro perguntas para receber uma rota inicial.</p>
+            </div>
+            <div class="recommendation" id="recommendation">
+              <p class="eyebrow">Sua rota sugerida</p>
+              <h3 id="recommendation-title"></h3>
+              <p class="route-tag" id="recommendation-course"></p>
+              <p id="recommendation-text"></p>
+              <ol class="next-list" id="recommendation-steps"></ol>
+              <a class="btn" id="recommendation-link" href="#curso">Ir para a recomendação</a>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--lavender" id="capacidades" aria-labelledby="cap-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="chapter" data-number="07">Comparação de capacidades</span>
+            <h2 class="section-title" id="cap-title">Escolha por tarefa, evidência e risco — não por fama.</h2>
+          </div>
+          <p class="section-lead">As categorias abaixo mudam menos que as marcas. Cada uma combina forças, limites e um ponto em que a revisão humana deixa de ser opcional.</p>
+        </div>
+
+        <div class="capability-shell">
+          <div class="capability-tabs" id="capability-tabs" role="tablist" aria-label="Categorias de capacidade"><button class="capability-tab" id="cap-tab-texto" type="button" role="tab" aria-selected="true" aria-controls="capability-panel" data-capability="texto" tabindex="0">Chat e texto<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m7 4 6 6-6 6"></path></svg></button><button class="capability-tab" id="cap-tab-pesquisa" type="button" role="tab" aria-selected="false" aria-controls="capability-panel" data-capability="pesquisa" tabindex="-1">Pesquisa<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m7 4 6 6-6 6"></path></svg></button><button class="capability-tab" id="cap-tab-documentos" type="button" role="tab" aria-selected="false" aria-controls="capability-panel" data-capability="documentos" tabindex="-1">Documentos<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m7 4 6 6-6 6"></path></svg></button><button class="capability-tab" id="cap-tab-imagens" type="button" role="tab" aria-selected="false" aria-controls="capability-panel" data-capability="imagens" tabindex="-1">Imagens<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m7 4 6 6-6 6"></path></svg></button><button class="capability-tab" id="cap-tab-video" type="button" role="tab" aria-selected="false" aria-controls="capability-panel" data-capability="video" tabindex="-1">Vídeo<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m7 4 6 6-6 6"></path></svg></button><button class="capability-tab" id="cap-tab-audio" type="button" role="tab" aria-selected="false" aria-controls="capability-panel" data-capability="audio" tabindex="-1">Áudio<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m7 4 6 6-6 6"></path></svg></button><button class="capability-tab" id="cap-tab-codigo" type="button" role="tab" aria-selected="false" aria-controls="capability-panel" data-capability="codigo" tabindex="-1">Código<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m7 4 6 6-6 6"></path></svg></button><button class="capability-tab" id="cap-tab-dados" type="button" role="tab" aria-selected="false" aria-controls="capability-panel" data-capability="dados" tabindex="-1">Dados<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m7 4 6 6-6 6"></path></svg></button><button class="capability-tab" id="cap-tab-automacao" type="button" role="tab" aria-selected="false" aria-controls="capability-panel" data-capability="automacao" tabindex="-1">Automação<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m7 4 6 6-6 6"></path></svg></button><button class="capability-tab" id="cap-tab-agentes" type="button" role="tab" aria-selected="false" aria-controls="capability-panel" data-capability="agentes" tabindex="-1">Agentes<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m7 4 6 6-6 6"></path></svg></button></div>
+          <section class="capability-panel" id="capability-panel" role="tabpanel" tabindex="0" aria-live="polite" aria-labelledby="cap-tab-texto"><p class="eyebrow">Categoria de capacidade</p><h3>Chat e texto</h3><p>Compare a utilidade com o custo de verificar. A ferramenta ideal depende do material, da atualidade e do impacto do erro.</p><div class="capability-facts"><article class="fact"><h4>Melhor tipo de uso</h4><p>Rascunhar, reorganizar, explicar, comparar alternativas e iterar ideias.</p></article><article class="fact"><h4>Limitações</h4><p>Pode soar seguro sem compreender o contexto real; qualidade varia conforme material e instruções.</p></article><article class="fact"><h4>Riscos</h4><p>Informações inventadas, tom inadequado, perda de autoria e exposição de dados.</p></article><article class="fact"><h4>Quando não utilizar</h4><p>Não use como autoridade final em fatos críticos ou para assinar decisões que ninguém revisou.</p></article></div></section>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="responsavel" aria-labelledby="responsavel-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="chapter" data-number="08">Uso responsável</span>
+            <h2 class="section-title" id="responsavel-title">Confiança nasce de limites explícitos.</h2>
+          </div>
+          <p class="section-lead">Os riscos não ficam em uma aula isolada no final. Eles aparecem no momento em que cada técnica é praticada, com uma ação concreta de prevenção.</p>
+        </div>
+
+        <div class="responsible-grid">
+          <details class="risk">
+            <summary><span class="risk-icon">!</span><strong>Informações inventadas</strong><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary>
+            <div class="risk-body"><p>Modelos podem produzir nomes, datas, referências e explicações plausíveis, porém falsas.</p><p><strong>Prática:</strong> separar afirmações verificáveis, pedir fontes primárias e conferir o conteúdo original.</p></div>
+          </details>
+          <details class="risk">
+            <summary><span class="risk-icon">P</span><strong>Privacidade e dados confidenciais</strong><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary>
+            <div class="risk-body"><p>Dados de clientes, saúde, contratos, credenciais ou informações internas podem exigir proteção e autorização.</p><p><strong>Prática:</strong> classificar, minimizar, anonimizar e seguir a política da instituição antes de enviar.</p></div>
+          </details>
+          <details class="risk">
+            <summary><span class="risk-icon">©</span><strong>Direitos autorais e autoria</strong><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary>
+            <div class="risk-body"><p>Gerar ou adaptar conteúdo não elimina direitos, licenças, atribuição nem regras acadêmicas.</p><p><strong>Prática:</strong> verificar permissão, registrar fontes e declarar apoio de IA quando o contexto exigir.</p></div>
+          </details>
+          <details class="risk">
+            <summary><span class="risk-icon">≠</span><strong>Vieses e exclusões</strong><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary>
+            <div class="risk-body"><p>Dados e escolhas de design podem reproduzir desigualdades ou apagar perspectivas relevantes.</p><p><strong>Prática:</strong> revisar quem pode ser prejudicado, testar casos diversos e não automatizar julgamentos sensíveis.</p></div>
+          </details>
+          <details class="risk">
+            <summary><span class="risk-icon">D</span><strong>Deepfakes e conteúdo sintético</strong><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary>
+            <div class="risk-body"><p>Imagem, voz e vídeo convincentes podem enganar, atribuir falas ou ferir reputações.</p><p><strong>Prática:</strong> obter consentimento, sinalizar conteúdo sintético e evitar imitação enganosa de pessoas.</p></div>
+          </details>
+          <details class="risk">
+            <summary><span class="risk-icon">↻</span><strong>Dependência excessiva</strong><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary>
+            <div class="risk-body"><p>Delegar sempre o primeiro pensamento reduz prática, memória, julgamento e capacidade de detectar erros.</p><p><strong>Prática:</strong> alternar “eu primeiro”, “IA como crítica” e “IA como execução”, conforme o objetivo de aprender.</p></div>
+          </details>
+          <details class="risk">
+            <summary><span class="risk-icon">H</span><strong>Decisões de alto impacto</strong><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary>
+            <div class="risk-body"><p>Saúde, direito, finanças, segurança e seleção de pessoas exigem competência, evidência atual e responsabilidade definida.</p><p><strong>Prática:</strong> usar IA apenas como apoio e encaminhar a decisão a profissional qualificado.</p></div>
+          </details>
+          <details class="risk">
+            <summary><span class="risk-icon">R</span><strong>Revisão humana superficial</strong><svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary>
+            <div class="risk-body"><p>“Um humano olhou” não garante qualidade se ele não tiver tempo, competência, critérios ou autoridade para corrigir.</p><p><strong>Prática:</strong> definir responsável, checklist, evidência e condição de interrupção do processo.</p></div>
+          </details>
+        </div>
+
+        <div class="human-rule">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3 4 6v5c0 5.1 3.4 8.7 8 10 4.6-1.3 8-4.9 8-10V6l-8-3Z"></path><path d="m8 12 2.5 2.5L16 9"></path></svg>
+          <div><h3>Regra de responsabilidade</h3><p>Quanto maior o impacto, a irreversibilidade, a sensibilidade dos dados ou a dificuldade de detectar o erro, maior deve ser a evidência e o controle humano.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--mint" id="criador" aria-labelledby="creator-title">
+      <div class="container creator-shell">
+        <div class="creator-copy">
+          <span class="chapter" data-number="09">Área do criador</span>
+          <h2 id="creator-title">Produzir menos conteúdo, mas fechar melhor o ciclo de aprendizagem.</h2>
+          <p>O projeto deve nascer como um piloto observável. Cada fase deixa evidências para a seguinte e a atualização é tratada como parte do produto, não como emergência.</p>
+          <a class="btn btn--secondary" href="#faq">Ver dúvidas do projeto</a>
+        </div>
+
+        <div class="creator-timeline" aria-label="Plano resumido de desenvolvimento">
+          <article class="creator-step"><span class="creator-number">01</span><div class="creator-card"><h3>Pesquisa de tarefas</h3><p>Entrevistar iniciantes e coletar situações reais, obstáculos, dados envolvidos e critérios de sucesso.</p><strong>Saída: banco priorizado de casos.</strong></div></article>
+          <article class="creator-step"><span class="creator-number">02</span><div class="creator-card"><h3>Roteiro e objetivos</h3><p>Escrever resultados observáveis, exemplos ruim/bom e pontos de verificação antes de gravar.</p><strong>Saída: mapa de aulas e avaliações.</strong></div></article>
+          <article class="creator-step"><span class="creator-number">03</span><div class="creator-card"><h3>Protótipo de conteúdo</h3><p>Produzir duas aulas completas, um exercício útil e o primeiro modelo do projeto final.</p><strong>Saída: piloto testável, não curso inteiro.</strong></div></article>
+          <article class="creator-step"><span class="creator-number">04</span><div class="creator-card"><h3>Teste com alunos</h3><p>Observar execução sem ajudar cedo demais, registrar dúvidas, erros, abandono e transferências para outras tarefas.</p><strong>Saída: evidência de compreensão.</strong></div></article>
+          <article class="creator-step"><span class="creator-number">05</span><div class="creator-card"><h3>Revisão pedagógica e técnica</h3><p>Corrigir ambiguidades, excesso de ferramenta, riscos e etapas que só funcionam na demonstração do professor.</p><strong>Saída: versão candidata.</strong></div></article>
+          <article class="creator-step"><span class="creator-number">06</span><div class="creator-card"><h3>Lançamento controlado</h3><p>Abrir para uma turma pequena, com canal de dúvidas, critérios de conclusão e registro de mudanças.</p><strong>Saída: primeira versão operável.</strong></div></article>
+          <article class="creator-step"><span class="creator-number">07</span><div class="creator-card"><h3>Atualização contínua</h3><p>Separar fundamentos estáveis, demonstrações substituíveis e alertas de mudança para atualizar por camadas.</p><strong>Saída: calendário e changelog.</strong></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--compact" id="faq" aria-labelledby="faq-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="chapter" data-number="10">Perguntas frequentes</span>
+            <h2 class="section-title" id="faq-title">O que este projeto promete — e o que não promete.</h2>
+          </div>
+          <p class="section-lead">Respostas provisórias para orientar o protótipo. Preço, plataforma, suporte e certificação ainda dependeriam de validação.</p>
+        </div>
+
+        <div class="faq-list">
+          <details class="faq">
+            <summary>Preciso saber programação?<svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary>
+            <p>Não para o curso introdutório. A linguagem técnica aparece gradualmente e sempre ligada a uma decisão prática. Programação, agentes e integrações entram em trilhas próprias.</p>
+          </details>
+          <details class="faq">
+            <summary>O curso ensina uma ferramenta específica?<svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary>
+            <p>Ferramentas aparecem nas demonstrações, mas organizadas por capacidade e tarefa. O método, os critérios de escolha e a verificação são o núcleo permanente.</p>
+          </details>
+          <details class="faq">
+            <summary>Vou receber uma lista de prompts prontos?<svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary>
+            <p>Haverá modelos comentados, não “frases mágicas”. O objetivo é entender por que cada parte existe, adaptar ao contexto e saber quando o modelo não serve.</p>
+          </details>
+          <details class="faq">
+            <summary>Como o conteúdo não ficará desatualizado?<svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary>
+            <p>Fundamentos e método ficam em aulas estáveis. Interfaces, preços, modelos e demonstrações ficam em blocos substituíveis, com data de revisão e changelog.</p>
+          </details>
+          <details class="faq">
+            <summary>IA sempre torna uma tarefa mais rápida?<svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary>
+            <p>Não. Em tarefas curtas, sensíveis, muito específicas ou difíceis de verificar, orientar e revisar a IA pode custar mais do que executar diretamente.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <a class="brand" href="#inicio"><span class="brand-mark" aria-hidden="true"></span><span data-project-name="">Curso IA</span></a>
+      <p class="footer-copy"><strong>Protótipo conceitual.</strong> Conteúdo, oferta e políticas ainda precisam de validação antes da publicação.</p>
+      <nav class="footer-links" aria-label="Links do rodapé">
+        <a href="#formacao">Formação</a>
+        <a href="#responsavel">Uso responsável</a>
+        <a href="#criador">Plano do criador</a>
+      </nav>
+    </div>
+  </footer>
+
+  <button class="icon-button back-to-top" id="back-to-top" type="button" aria-label="Voltar ao topo">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 5-5 5 5"></path><path d="M10 7v10"></path></svg>
   </button>
-</header>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<main>
+  <script>
+    /* =========================================================
+       CONFIGURAÇÃO E DADOS — conteúdo mutável fica centralizado
+       ========================================================= */
+    (function () {
+      "use strict";
 
-  <div class="alert" id="iosAlert">
-    <strong>iPhone / Safari:</strong> use o <strong>Bluefy</strong> (App Store, gratuito) — Safari não suporta Web Bluetooth.
-  </div>
+      var PROJECT_NAME = "Curso IA";
 
-  <!-- Reservatórios -->
-  <div class="reservoirs">
+      var courses = [
+        {
+          id: 1, level: "beginner", areas: ["trabalho", "estudo", "negocios", "criacao", "tecnico"],
+          title: "IA na Prática", objective: "Entender, orientar, avaliar e aplicar IA em tarefas reais.",
+          duration: "12 h estimadas", prerequisite: "Nenhum",
+          project: "Dossiê antes/depois de um fluxo real."
+        },
+        {
+          id: 2, level: "intermediate", areas: ["trabalho"],
+          title: "Produtividade no Trabalho", objective: "Planejar, comunicar, organizar e documentar com revisão humana.",
+          duration: "8 h estimadas", prerequisite: "Curso de entrada",
+          project: "Sistema pessoal de três fluxos recorrentes."
+        },
+        {
+          id: 3, level: "intermediate", areas: ["estudo"],
+          title: "Estudos e Ensino", objective: "Aprender, explicar, praticar e avaliar sem terceirizar o raciocínio.",
+          duration: "9 h estimadas", prerequisite: "Curso de entrada",
+          project: "Plano de aprendizagem com evidências e autoavaliação."
+        },
+        {
+          id: 4, level: "intermediate", areas: ["trabalho", "negocios"],
+          title: "Administração, Documentos e Dados", objective: "Extrair, comparar, redigir e analisar materiais com rastreabilidade.",
+          duration: "10 h estimadas", prerequisite: "Curso de entrada",
+          project: "Kit operacional de documento, planilha e relatório."
+        },
+        {
+          id: 5, level: "intermediate", areas: ["negocios", "trabalho"],
+          title: "Pequenos Negócios e Vendas", objective: "Mapear atendimento, ofertas e rotinas sem perder contexto humano.",
+          duration: "10 h estimadas", prerequisite: "Curso de entrada",
+          project: "Fluxo de atendimento com limites e indicadores."
+        },
+        {
+          id: 6, level: "intermediate", areas: ["criacao", "negocios"],
+          title: "Conteúdo e Marketing", objective: "Pesquisar, criar, adaptar e revisar conteúdo orientado por estratégia.",
+          duration: "10 h estimadas", prerequisite: "Curso de entrada",
+          project: "Campanha pequena com briefing, peças e revisão."
+        },
+        {
+          id: 7, level: "intermediate", areas: ["criacao"],
+          title: "Imagem, Áudio e Vídeo", objective: "Criar mídia com direção, consentimento, direitos e controle de qualidade.",
+          duration: "9 h estimadas", prerequisite: "Curso de entrada",
+          project: "Kit multimídia coerente para um caso real."
+        },
+        {
+          id: 8, level: "intermediate", areas: ["tecnico"],
+          title: "Engenharia, Indústria e Código", objective: "Usar IA como apoio técnico com testes, documentação e segurança.",
+          duration: "12 h estimadas", prerequisite: "Curso de entrada + base da área",
+          project: "Protótipo técnico validado e documentado."
+        },
+        {
+          id: 9, level: "advanced", areas: ["trabalho", "negocios", "tecnico"],
+          title: "Automações e Agentes", objective: "Orquestrar ferramentas, dados e decisões com pontos de controle.",
+          duration: "14 h estimadas", prerequisite: "Uma trilha intermediária",
+          project: "Assistente especializado com supervisão e recuperação de falhas."
+        },
+        {
+          id: 10, level: "advanced", areas: ["trabalho", "negocios", "tecnico"],
+          title: "Estratégia, Governança e Adoção", objective: "Implantar IA em equipes com política, métricas, riscos e formação.",
+          duration: "9 h estimadas", prerequisite: "Experiência prática",
+          project: "Plano de adoção responsável para uma operação."
+        }
+      ];
 
-    <!-- Superior -->
-    <div class="res-card">
-      <div class="res-title">Reservatório<br>Superior</div>
-      <div class="tank">
-        <div class="tank-fill sup" id="tankSupFill" style="height:0%"></div>
-        <div class="tank-lines"></div>
-        <div class="tank-pct" id="tankSupPct">0%</div>
-      </div>
-      <div class="res-vol" id="supVol">0 <small>mL</small></div>
-      <div class="res-sub" id="supSub">Vazio</div>
-    </div>
+      var modules = [
+        { title: "Começar pelo problema", duration: "55 min", lessons: [
+          ["Diagnóstico: onde a IA pode ajudar?", "25 min · mapa de tarefas e riscos"],
+          ["Cinco minutos para decidir não usar IA", "30 min · custo, impacto e reversibilidade"]
+        ]},
+        { title: "Como a IA responde — e erra", duration: "70 min", lessons: [
+          ["Previsão, contexto e variação de respostas", "35 min · modelo mental intuitivo"],
+          ["Fluência não é verdade", "35 min · informações inventadas e incerteza"]
+        ]},
+        { title: "Pedidos que orientam", duration: "105 min", lessons: [
+          ["Do pedido vago ao briefing útil", "40 min · objetivo, contexto e formato"],
+          ["Exemplos, restrições e critérios", "35 min · controle de qualidade"],
+          ["Conversar, criticar e lapidar", "30 min · iteração consciente"]
+        ]},
+        { title: "Pesquisa e verificação", duration: "90 min", lessons: [
+          ["Pesquisar não é apenas gerar texto", "40 min · busca, fonte e atualidade"],
+          ["Protocolo de verificação", "50 min · afirmações, evidências e triangulação"]
+        ]},
+        { title: "Documentos, escrita e dados", duration: "120 min", lessons: [
+          ["Ler, extrair e comparar documentos", "40 min · rastreabilidade"],
+          ["Escrever sem perder autoria", "35 min · e-mails e relatórios"],
+          ["Tabelas e dados sem falsa precisão", "45 min · cálculos e validação"]
+        ]},
+        { title: "Fluxos de produtividade", duration: "85 min", lessons: [
+          ["De tarefa isolada a fluxo repetível", "45 min · etapas e checkpoints"],
+          ["Escolher a categoria de ferramenta", "40 min · capacidade, custo e risco"]
+        ]},
+        { title: "Multimodal e uso responsável", duration: "95 min", lessons: [
+          ["Imagem, áudio e vídeo com direção", "40 min · briefing e revisão"],
+          ["Privacidade, direitos, vieses e deepfakes", "55 min · prevenção aplicada"]
+        ]},
+        { title: "Projeto final e autonomia", duration: "100 min", lessons: [
+          ["Construir e testar o fluxo real", "65 min · método ROTA completo"],
+          ["Retrospectiva e plano de evolução", "35 min · limites e próximos passos"]
+        ]}
+      ];
 
-    <!-- Inferior -->
-    <div class="res-card">
-      <div class="res-title">Reservatório<br>Inferior</div>
-      <div class="tank">
-        <div class="tank-fill inf" id="tankInfFill" style="height:0%"></div>
-        <div class="tank-lines"></div>
-        <div class="tank-pct" id="tankInfPct">0%</div>
-      </div>
-      <div class="res-vol" id="infVol">— <small>mL</small></div>
-      <div class="res-sub" id="infSub">Aguardando</div>
-    </div>
+      var lessonStages = [
+        {
+          title: "Etapa 1 · Pedido vago",
+          quality: 1,
+          prompt: "Escreva um e-mail cobrando os documentos.",
+          response: "Assunto: Documentos pendentes\n\nPrezado(a), solicito o envio dos documentos pendentes o mais breve possível. Agradeço pela atenção.",
+          reviewTitle: "Parece correto, mas quase tudo ficou indefinido.",
+          review: "A IA não sabe quem recebe, quais documentos faltam, qual é o prazo real, o tom da relação nem se pode afirmar urgência."
+        },
+        {
+          title: "Etapa 2 · Pedido contextualizado",
+          quality: 2,
+          prompt: "Sou assistente administrativa. Escreva um e-mail cordial para um fornecedor recorrente solicitando as notas fiscais de junho que ainda não recebemos. Precisamos conferi-las até 12 de julho. Use assunto claro, até 120 palavras e finalize oferecendo ajuda.",
+          response: "Assunto: Envio das notas fiscais de junho\n\nOlá, [nome]. Tudo bem?\n\nAinda não localizamos as notas fiscais referentes a junho. Você poderia enviá-las até 12 de julho para concluirmos a conferência? Se já tiver encaminhado, por favor desconsidere e, se possível, informe a data do envio.\n\nFico à disposição caso precise confirmar algum dado.\n\nAtenciosamente,\n[nome]",
+          reviewTitle: "Agora a saída é utilizável, mas ainda precisa de conferência.",
+          review: "O texto respeita público, prazo, tom e formato. Mesmo assim, os fatos vieram do pedido e precisam coincidir com o controle real da empresa."
+        },
+        {
+          title: "Etapa 3 · Revisão e verificação",
+          quality: 3,
+          prompt: "Revise o e-mail anterior. Não crie fatos. Mantenha entre colchetes qualquer dado que eu precise confirmar. Depois do texto, liste: (1) fatos usados; (2) campos a confirmar; (3) risco de mal-entendido; (4) uma versão mais curta.",
+          response: "Assunto: [confirmar] Notas fiscais de junho\n\nOlá, [nome do contato].\n\nNão localizamos as notas fiscais de [confirmar período/empresa]. Você poderia enviá-las até [confirmar: 12 de julho]? Se já enviou, informe a data para verificarmos. Fico à disposição.\n\nFatos usados: relação recorrente; notas não localizadas.\nCampos a confirmar: contato, empresa, período e prazo.\nRisco: o material pode já ter sido enviado.",
+          reviewTitle: "A qualidade agora inclui um mecanismo de controle.",
+          review: "O processo revela suposições e cria pontos de checagem. A pessoa ainda precisa validar o sistema interno e decidir se o e-mail deve ser enviado."
+        }
+      ];
 
-  </div>
+      var capabilities = [
+        { id: "texto", name: "Chat e texto", best: "Rascunhar, reorganizar, explicar, comparar alternativas e iterar ideias.", limits: "Pode soar seguro sem compreender o contexto real; qualidade varia conforme material e instruções.", risks: "Informações inventadas, tom inadequado, perda de autoria e exposição de dados.", avoid: "Não use como autoridade final em fatos críticos ou para assinar decisões que ninguém revisou." },
+        { id: "pesquisa", name: "Pesquisa", best: "Localizar fontes, mapear perspectivas e responder perguntas dependentes de informação atual.", limits: "Nem toda resposta acessa a web; resumo pode omitir ressalvas ou confundir fonte primária e comentário.", risks: "Citações inexistentes, fontes frágeis, conteúdo antigo e falsa triangulação.", avoid: "Não use sem abrir as fontes quando a data, a regra ou a evidência importarem." },
+        { id: "documentos", name: "Documentos", best: "Extrair campos, resumir, comparar versões, localizar cláusulas e montar estruturas.", limits: "PDFs digitalizados, tabelas complexas e contexto entre anexos podem ser lidos de modo incompleto.", risks: "Omissão silenciosa, interpretação jurídica indevida e envio de material confidencial.", avoid: "Não substitua leitura especializada nem aprovação formal em documentos de alto impacto." },
+        { id: "imagens", name: "Imagens", best: "Explorar conceitos visuais, criar variações, editar e produzir ativos sob direção.", limits: "Texto, anatomia, consistência entre peças e detalhes de marca podem falhar.", risks: "Direitos, estereótipos, representação enganosa e uso de identidade sem consentimento.", avoid: "Não crie prova visual falsa nem imite pessoa real de forma enganosa." },
+        { id: "video", name: "Vídeo", best: "Storyboards, cenas curtas, variações, pré-visualização e apoio à edição.", limits: "Continuidade, movimentos, física, fala e identidade podem oscilar entre quadros.", risks: "Deepfakes, atribuição falsa, direitos de imagem e desinformação.", avoid: "Não publique representação realista de alguém sem consentimento e sinalização adequada." },
+        { id: "audio", name: "Áudio", best: "Transcrição, limpeza, síntese, acessibilidade e protótipos de voz.", limits: "Sotaques, ruído, sobreposição e nomes próprios reduzem precisão.", risks: "Clonagem de voz, fraude, perda de contexto e transcrição de dados sensíveis.", avoid: "Não imite voz de pessoa sem permissão nem trate transcrição automática como registro perfeito." },
+        { id: "codigo", name: "Código", best: "Explicar, esboçar, refatorar, criar testes e investigar erros com evidências.", limits: "Pode gerar solução plausível, insegura, incompatível ou não testada.", risks: "Vulnerabilidades, dependências indevidas, perda de dados e confiança em testes insuficientes.", avoid: "Não execute código desconhecido em ambiente sensível nem publique sem revisão e testes." },
+        { id: "dados", name: "Dados", best: "Limpar, explorar, resumir, visualizar e propor hipóteses para análise.", limits: "Definições de métricas, amostra e qualidade da base não são resolvidas apenas pelo modelo.", risks: "Falsa precisão, causalidade inventada, viés e vazamento de dados.", avoid: "Não decida com base em tabela ou gráfico sem validar fonte, definição e cálculo." },
+        { id: "automacao", name: "Automação", best: "Conectar etapas repetitivas com regras claras, logs e tratamento de exceções.", limits: "Mudanças de interface, credenciais, formatos e casos raros quebram fluxos.", risks: "Ação em massa errada, mensagens indevidas, perda de dados e falhas silenciosas.", avoid: "Não automatize ação irreversível sem prévia, limite, confirmação e recuperação." },
+        { id: "agentes", name: "Agentes", best: "Planejar e executar sequências com ferramentas, memória e objetivos delimitados.", limits: "Objetivos ambíguos se ampliam; erros acumulam entre etapas e ferramentas.", risks: "Autonomia excessiva, permissões amplas, ações não previstas e difícil auditoria.", avoid: "Não delegue decisão sensível ou acesso amplo sem sandbox, aprovação e rastreabilidade." }
+      ];
 
-  <!-- Badge bombeando (centralizado entre os dois tanques) -->
-  <div style="display:flex;align-items:center;justify-content:center;">
-    <div class="pump-status" id="pumpStatus">
-      <div class="pump-pulse"></div>
-      Bombeando ↑
-    </div>
-  </div>
+      /* Utilitários */
+      function qs(selector, scope) { return (scope || document).querySelector(selector); }
+      function qsa(selector, scope) { return Array.prototype.slice.call((scope || document).querySelectorAll(selector)); }
 
-  <!-- Controle de bombeamento -->
-  <div class="card">
-    <div class="card-label">Volume alvo — Reservatório Superior</div>
+      var toastTimer;
+      function showToast(message) {
+        var toast = qs("#toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(function () { toast.classList.remove("show"); }, 2400);
+      }
 
-    <div class="vol-row">
-      <button class="vol-btn" onclick="changeVol(-50)">−</button>
-      <div class="vol-mid">
-        <span class="vol-mid-num" id="targetNum">200</span>
-        <span class="vol-mid-unit">mL</span>
-      </div>
-      <button class="vol-btn" onclick="changeVol(+50)">+</button>
-    </div>
+      function escapeHTML(value) {
+        return String(value).replace(/[&<>"']/g, function (char) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char];
+        });
+      }
 
-    <div class="actions">
-      <button class="btn-primary" id="startBtn" onclick="startPump()" disabled>▶ Iniciar bombeamento</button>
-      <button class="btn-danger"  id="stopBtn"  onclick="stopPump()"  disabled>■ Parar</button>
-    </div>
-  </div>
+      /* Marca centralizada */
+      document.title = PROJECT_NAME + " — Inteligência artificial com método e critério";
+      qsa("[data-project-name]").forEach(function (el) { el.textContent = PROJECT_NAME; });
 
-  <!-- Stats -->
-  <div class="stats">
-    <div class="stat">
-      <div class="stat-label">Alvo (sup)</div>
-      <div class="stat-val" id="statTarget">200 <small>mL</small></div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Restante</div>
-      <div class="stat-val" id="statRemain">—</div>
-    </div>
-  </div>
+      /* Tema */
+      var root = document.documentElement;
+      var themeToggle = qs("#theme-toggle");
+      var storedTheme;
+      try { storedTheme = localStorage.getItem("cursoIATheme"); } catch (error) { storedTheme = null; }
+      var preferredDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      var initialTheme = storedTheme || (preferredDark ? "dark" : "light");
 
-  <!-- Log -->
-  <div class="log" id="logBox"><span class="info">[sistema] Aguardando conexão...</span></div>
+      function setTheme(theme) {
+        root.setAttribute("data-theme", theme);
+        var dark = theme === "dark";
+        themeToggle.setAttribute("aria-pressed", String(dark));
+        themeToggle.setAttribute("aria-label", dark ? "Ativar modo claro" : "Ativar modo escuro");
+        themeToggle.innerHTML = dark
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"></path></svg>'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="3.5"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path></svg>';
+      }
 
-</main>
-
-<script>
-  const SVC = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
-  const RX  = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
-  const TX  = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
-
-  let device  = null;
-  let rxChar  = null;
-  let target  = 200;
-  let supML   = 0;
-  let infML   = 0;
-  let pumping = false;
-  const SUP_MAX = 500;
-  const INF_MAX = 500; // ajuste se o inferior tiver capacidade diferente
-
-  const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent);
-  if (!isIOS) document.getElementById('iosAlert').style.display = 'none';
-
-  function log(msg, cls) {
-    const box = document.getElementById('logBox');
-    const d   = new Date();
-    const ts  = [d.getHours(), d.getMinutes(), d.getSeconds()].map(n => String(n).padStart(2,'0')).join(':');
-    box.innerHTML += `<br><span class="${cls||''}">[${ts}] ${msg}</span>`;
-    box.scrollTop = box.scrollHeight;
-  }
-
-  function changeVol(delta) {
-    target = Math.max(0, Math.min(SUP_MAX, target + delta));
-    document.getElementById('targetNum').textContent = target;
-    document.getElementById('statTarget').innerHTML  = target + ' <small>mL</small>';
-    updateRemain();
-  }
-
-  function updateRemain() {
-    const rem = pumping ? Math.max(0, target - supML) : null;
-    document.getElementById('statRemain').innerHTML = rem !== null ? rem + ' <small>mL</small>' : '—';
-  }
-
-  function updateSup(ml) {
-    supML = Math.max(0, Math.min(SUP_MAX, ml));
-    const pct = Math.round((supML / SUP_MAX) * 100);
-    document.getElementById('tankSupFill').style.height = pct + '%';
-    document.getElementById('tankSupPct').textContent   = pct + '%';
-    document.getElementById('supVol').innerHTML         = supML + ' <small>mL</small>';
-    document.getElementById('supSub').textContent       = pct === 0 ? 'Vazio' : pct === 100 ? 'Cheio' : pct + '% cheio';
-    updateRemain();
-    if (pumping && supML >= target) {
-      pumping = false;
-      document.getElementById('pumpStatus').classList.remove('show');
-      log('Alvo atingido — bomba parou', 'ok');
-    }
-  }
-
-  function updateInf(ml) {
-    infML = Math.max(0, Math.min(INF_MAX, ml));
-    const pct = Math.round((infML / INF_MAX) * 100);
-    document.getElementById('tankInfFill').style.height = pct + '%';
-    document.getElementById('tankInfPct').textContent   = pct + '%';
-    document.getElementById('infVol').innerHTML         = infML + ' <small>mL</small>';
-    document.getElementById('infSub').textContent       = pct === 0 ? 'Vazio' : pct === 100 ? 'Cheio' : pct + '% cheio';
-  }
-
-  /* Parseia "250,130" ou "250" (retrocompatível) */
-  function onBLEData(raw) {
-    raw = raw.trim();
-    if (raw.includes(',')) {
-      const parts = raw.split(',');
-      const s = parseInt(parts[0], 10);
-      const i = parseInt(parts[1], 10);
-      if (!isNaN(s)) updateSup(s);
-      if (!isNaN(i)) updateInf(i);
-    } else {
-      const s = parseInt(raw, 10);
-      if (!isNaN(s)) updateSup(s);
-    }
-  }
-
-  async function toggleConnect() {
-    if (device && device.gatt.connected) { device.gatt.disconnect(); return; }
-    if (!navigator.bluetooth) {
-      log('Web Bluetooth não disponível. Use Bluefy no iPhone.', 'err');
-      alert('Web Bluetooth não disponível.\nNo iPhone: abra no app Bluefy.');
-      return;
-    }
-    try {
-      document.getElementById('connLabel').textContent = 'Procurando…';
-      log('Scan BLE iniciado…', 'info');
-      device = await navigator.bluetooth.requestDevice({
-        filters: [{ name: 'ESP32_Torre_UFPR' }],
-        optionalServices: [SVC]
+      setTheme(initialTheme);
+      themeToggle.addEventListener("click", function () {
+        var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        setTheme(next);
+        try { localStorage.setItem("cursoIATheme", next); } catch (error) {}
       });
-      device.addEventListener('gattserverdisconnected', onDisconnect);
-      log('Encontrado. Conectando…', 'info');
-      const server  = await device.gatt.connect();
-      const service = await server.getPrimaryService(SVC);
-      rxChar        = await service.getCharacteristic(RX);
-      const txChar  = await service.getCharacteristic(TX);
-      await txChar.startNotifications();
-      txChar.addEventListener('characteristicvaluechanged', e => {
-        onBLEData(new TextDecoder().decode(e.target.value));
+
+      /* Menu móvel */
+      var menuToggle = qs("#menu-toggle");
+      var navLinks = qs("#nav-links");
+      function closeMenu() {
+        navLinks.classList.remove("open");
+        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.setAttribute("aria-label", "Abrir menu");
+        document.body.classList.remove("menu-open");
+      }
+      menuToggle.addEventListener("click", function () {
+        var open = navLinks.classList.toggle("open");
+        menuToggle.setAttribute("aria-expanded", String(open));
+        menuToggle.setAttribute("aria-label", open ? "Fechar menu" : "Abrir menu");
+        document.body.classList.toggle("menu-open", open);
       });
-      onConnect();
-    } catch (err) {
-      if (err.name !== 'NotFoundError') log('Erro: ' + err.message, 'err');
-      document.getElementById('connLabel').textContent = 'Conectar';
-    }
-  }
+      qsa("a", navLinks).forEach(function (link) { link.addEventListener("click", closeMenu); });
+      document.addEventListener("keydown", function (event) { if (event.key === "Escape") closeMenu(); });
 
-  function onConnect() {
-    document.getElementById('dot').classList.add('on');
-    document.getElementById('connLabel').textContent = 'Conectado';
-    document.getElementById('startBtn').disabled = false;
-    document.getElementById('stopBtn').disabled  = false;
-    log('Conectado a ' + device.name, 'ok');
-  }
+      /* Mapa da formação */
+      var levelInfo = {
+        beginner: { title: "Iniciante", subtitle: "Fundamentos e método", css: "level--beginner" },
+        intermediate: { title: "Intermediário", subtitle: "Aplicação em contextos", css: "level--intermediate" },
+        advanced: { title: "Avançado", subtitle: "Sistemas, estratégia e impacto", css: "level--advanced" }
+      };
 
-  function onDisconnect() {
-    document.getElementById('dot').classList.remove('on');
-    document.getElementById('connLabel').textContent = 'Conectar';
-    document.getElementById('startBtn').disabled = true;
-    document.getElementById('stopBtn').disabled  = true;
-    document.getElementById('pumpStatus').classList.remove('show');
-    rxChar = null; pumping = false;
-    log('Desconectado.', 'err');
-  }
+      function renderCourses(filter) {
+        var map = qs("#learning-map");
+        map.innerHTML = "";
+        var visibleCount = 0;
 
-  async function sendCmd(cmd) {
-    if (!rxChar) { log('Sem conexão BLE.', 'err'); return; }
-    try { await rxChar.writeValue(new TextEncoder().encode(cmd)); }
-    catch (e) { log('Erro ao enviar: ' + e.message, 'err'); }
-  }
+        ["beginner", "intermediate", "advanced"].forEach(function (levelKey) {
+          var levelCourses = courses.filter(function (course) {
+            return course.level === levelKey && (filter === "todos" || course.areas.indexOf(filter) !== -1);
+          });
+          if (!levelCourses.length) return;
+          visibleCount += levelCourses.length;
 
-  async function startPump() {
-    await sendCmd('set:' + target);
-    pumping = true;
-    document.getElementById('pumpStatus').classList.add('show');
-    updateRemain();
-    log('Bombeamento → alvo ' + target + ' mL (superior)', 'ok');
-  }
+          var section = document.createElement("section");
+          section.className = "level " + levelInfo[levelKey].css;
+          section.setAttribute("aria-labelledby", "level-" + levelKey);
+          var cards = levelCourses.map(function (course) {
+            return '<article class="course-card">' +
+              '<span class="course-number">CURSO ' + String(course.id).padStart(2, "0") + '</span>' +
+              '<h4>' + escapeHTML(course.title) + '</h4>' +
+              '<p>' + escapeHTML(course.objective) + '</p>' +
+              '<div class="course-meta"><span>' + escapeHTML(course.duration) + '</span><span>Pré: ' + escapeHTML(course.prerequisite) + '</span></div>' +
+              '<div class="course-project"><strong>Projeto:</strong> ' + escapeHTML(course.project) + '</div>' +
+            '</article>';
+          }).join("");
 
-  async function stopPump() {
-    await sendCmd('off');
-    pumping = false;
-    document.getElementById('pumpStatus').classList.remove('show');
-    updateRemain();
-    log('Parado manualmente.', 'info');
-  }
-</script>
-</body>
-</html>
+          section.innerHTML =
+            '<div class="level-label"><h3 id="level-' + levelKey + '">' + levelInfo[levelKey].title + '</h3><p>' + levelInfo[levelKey].subtitle + '</p></div>' +
+            '<div class="course-grid">' + cards + '</div>';
+          map.appendChild(section);
+        });
+
+        qs("#map-empty").hidden = visibleCount > 0;
+      }
+
+      renderCourses("todos");
+      qsa(".filter").forEach(function (button) {
+        button.addEventListener("click", function () {
+          qsa(".filter").forEach(function (item) { item.setAttribute("aria-pressed", "false"); });
+          button.setAttribute("aria-pressed", "true");
+          renderCourses(button.getAttribute("data-filter"));
+        });
+      });
+
+      /* Módulos e progresso local */
+      var completedModules = [];
+      try { completedModules = JSON.parse(localStorage.getItem("cursoIAProgress") || "[]"); } catch (error) { completedModules = []; }
+      if (!Array.isArray(completedModules)) completedModules = [];
+
+      function renderModules() {
+        var list = qs("#module-list");
+        list.innerHTML = modules.map(function (module, index) {
+          var lessons = module.lessons.map(function (lesson) {
+            return '<div class="lesson-row"><div><strong>' + escapeHTML(lesson[0]) + '</strong><span>' + escapeHTML(lesson[1]) + '</span></div></div>';
+          }).join("");
+          var checked = completedModules.indexOf(index) !== -1;
+          return '<details class="module"' + (index === 0 ? " open" : "") + '>' +
+            '<summary><span class="module-index">' + String(index + 1).padStart(2, "0") + '</span>' +
+            '<span class="module-title"><strong>' + escapeHTML(module.title) + '</strong><span>' + escapeHTML(module.duration) + ' · ' + module.lessons.length + ' aulas</span></span>' +
+            '<svg class="chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 7 5 5 5-5"></path></svg></summary>' +
+            '<div class="module-body">' + lessons +
+            '<label class="module-complete"><input type="checkbox" data-module="' + index + '"' + (checked ? " checked" : "") + '> Marcar módulo como concluído nesta simulação</label></div></details>';
+        }).join("");
+
+        qsa("[data-module]", list).forEach(function (checkbox) {
+          checkbox.addEventListener("change", function () {
+            var moduleIndex = Number(checkbox.getAttribute("data-module"));
+            if (checkbox.checked && completedModules.indexOf(moduleIndex) === -1) completedModules.push(moduleIndex);
+            if (!checkbox.checked) completedModules = completedModules.filter(function (item) { return item !== moduleIndex; });
+            try { localStorage.setItem("cursoIAProgress", JSON.stringify(completedModules)); } catch (error) {}
+            updateProgress();
+          });
+        });
+        updateProgress();
+      }
+
+      function updateProgress() {
+        var count = completedModules.length;
+        var percent = Math.round((count / modules.length) * 100);
+        qs("#course-progress").style.width = percent + "%";
+        qs("#progress-label").textContent = count + " de " + modules.length + " módulos";
+        qs("#progress-percent").textContent = percent + "%";
+        qs("#course-progress").parentElement.setAttribute("aria-label", "Progresso simulado: " + percent + "%");
+      }
+
+      renderModules();
+
+      /* Aula interativa */
+      var currentStage = 0;
+      function renderLessonStage(index, focusPanel) {
+        currentStage = index;
+        var stage = lessonStages[index];
+        qs("#demo-title").textContent = stage.title;
+        qs("#demo-prompt").textContent = stage.prompt;
+        qs("#demo-response").textContent = stage.response;
+        qs("#demo-review-title").textContent = stage.reviewTitle;
+        qs("#demo-review-text").textContent = stage.review;
+        qs("#lesson-panel").setAttribute("aria-labelledby", "lesson-tab-" + index);
+
+        qsa(".lesson-tab").forEach(function (tab, tabIndex) {
+          var selected = tabIndex === index;
+          tab.setAttribute("aria-selected", String(selected));
+          tab.setAttribute("tabindex", selected ? "0" : "-1");
+        });
+        qsa("#quality-meter span").forEach(function (bar, barIndex) { bar.classList.toggle("on", barIndex < stage.quality); });
+        qs("#quality-meter").setAttribute("aria-label", "Qualidade pedagógica estimada: " + stage.quality + " de 3");
+        qs("#demo-next").textContent = index === lessonStages.length - 1 ? "Recomeçar" : "Próxima etapa";
+        if (focusPanel) qs("#lesson-panel").focus();
+      }
+
+      qsa(".lesson-tab").forEach(function (tab) {
+        tab.addEventListener("click", function () { renderLessonStage(Number(tab.getAttribute("data-stage")), false); });
+        tab.addEventListener("keydown", function (event) {
+          var direction = event.key === "ArrowRight" || event.key === "ArrowDown" ? 1 : event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 0;
+          if (!direction) return;
+          event.preventDefault();
+          var next = (currentStage + direction + lessonStages.length) % lessonStages.length;
+          renderLessonStage(next, false);
+          qs("#lesson-tab-" + next).focus();
+        });
+      });
+      qs("#demo-next").addEventListener("click", function () { renderLessonStage((currentStage + 1) % lessonStages.length, true); });
+      renderLessonStage(0, false);
+
+      /* Laboratório de pedidos */
+      var promptForm = qs("#prompt-form");
+      var promptOutput = qs("#prompt-output");
+      var copyButton = qs("#copy-prompt");
+      var currentPrompt = "";
+
+      function buildPrompt(formData) {
+        var lines = [];
+        lines.push("OBJETIVO\n" + formData.get("objective").trim());
+        if (formData.get("context").trim()) lines.push("CONTEXTO\n" + formData.get("context").trim());
+        if (formData.get("audience").trim()) lines.push("PÚBLICO\n" + formData.get("audience").trim());
+        if (formData.get("format").trim()) lines.push("FORMATO DA RESPOSTA\n" + formData.get("format").trim());
+        if (formData.get("restrictions").trim()) lines.push("RESTRIÇÕES E LIMITES\n" + formData.get("restrictions").trim());
+        if (formData.get("quality").trim()) lines.push("CRITÉRIOS DE QUALIDADE\n" + formData.get("quality").trim());
+        if (formData.get("sources")) {
+          lines.push("EVIDÊNCIAS E VERIFICAÇÃO\nDiferencie fatos, hipóteses e sugestões. Para afirmações verificáveis ou atuais, indique fontes confiáveis que eu possa abrir. Não invente referências. Sinalize incertezas e liste o que precisa de confirmação humana.");
+        }
+        lines.push("PROCESSO\n1. Antes de responder, aponte brevemente qualquer informação essencial que esteja faltando.\n2. Produza uma primeira versão seguindo os critérios acima.\n3. Faça uma autocrítica curta: possíveis erros, suposições e limites.\n4. Entregue uma versão final revisada.");
+        return lines.join("\n\n");
+      }
+
+      promptForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        if (!promptForm.reportValidity()) return;
+        currentPrompt = buildPrompt(new FormData(promptForm));
+        promptOutput.textContent = currentPrompt;
+        copyButton.disabled = false;
+        qs("#prompt-status").textContent = "Pedido montado. Revise antes de copiar.";
+        showToast("Pedido estruturado com o método ROTA.");
+      });
+
+      promptForm.addEventListener("reset", function () {
+        window.setTimeout(function () {
+          currentPrompt = "";
+          promptOutput.textContent = 'Preencha ao menos o objetivo e selecione “Montar pedido”.';
+          copyButton.disabled = true;
+          qs("#prompt-status").textContent = "Nenhum pedido montado.";
+        }, 0);
+      });
+
+      copyButton.addEventListener("click", function () {
+        if (!currentPrompt) return;
+        function fallbackCopy() {
+          var area = document.createElement("textarea");
+          area.value = currentPrompt;
+          area.setAttribute("readonly", "");
+          area.style.position = "fixed";
+          area.style.opacity = "0";
+          document.body.appendChild(area);
+          area.select();
+          try { document.execCommand("copy"); showToast("Pedido copiado."); }
+          catch (error) { showToast("Não foi possível copiar. Selecione o texto manualmente."); }
+          area.remove();
+        }
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(currentPrompt).then(function () { showToast("Pedido copiado."); }).catch(fallbackCopy);
+        } else {
+          fallbackCopy();
+        }
+      });
+
+      /* Diagnóstico */
+      var recommendations = {
+        trabalho: { title: "Base prática para o trabalho", course: "IA na Prática → Produtividade no Trabalho", text: "Comece pelo método e aplique-o a uma rotina pequena, frequente e fácil de revisar.", link: "#curso" },
+        estudo: { title: "Aprender sem terceirizar o raciocínio", course: "IA na Prática → Estudos e Ensino", text: "Use IA para explicar, questionar e praticar; mantenha produção própria e checagem de fontes.", link: "#curso" },
+        negocios: { title: "Aplicação com contexto de negócio", course: "IA na Prática → Pequenos Negócios e Vendas", text: "Mapeie primeiro o processo, o cliente e os dados sensíveis antes de criar conteúdo ou automatizar.", link: "#curso" },
+        criacao: { title: "Criação orientada por briefing", course: "IA na Prática → Conteúdo e Marketing → Multimídia", text: "Construa repertório, direção e critérios; trate autoria, consentimento e consistência como parte da criação.", link: "#capacidades" },
+        tecnico: { title: "Apoio técnico com testes", course: "IA na Prática → Engenharia, Indústria e Código", text: "Acelere investigação e documentação, mas preserve simulação, teste, revisão e responsabilidade técnica.", link: "#capacidades" }
+      };
+
+      qs("#diagnosis-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        var data = new FormData(event.currentTarget);
+        var interest = data.get("interest");
+        var score = Number(data.get("experience")) + Number(data.get("verification")) + Number(data.get("privacy"));
+        var rec = recommendations[interest];
+        var foundation = score <= 2
+          ? "Priorize fundamentos, privacidade e verificação antes de ampliar o uso."
+          : score <= 4
+            ? "Você já tem contato com IA; transforme tentativas isoladas em um processo repetível."
+            : "Você demonstra bons hábitos iniciais; use o curso-base como nivelamento e avance para projetos.";
+
+        qs("#result-placeholder").hidden = true;
+        qs("#recommendation-title").textContent = rec.title;
+        qs("#recommendation-course").textContent = rec.course;
+        qs("#recommendation-text").textContent = rec.text;
+        qs("#recommendation-steps").innerHTML =
+          "<li>" + escapeHTML(foundation) + "</li>" +
+          "<li>Escolha uma tarefa de baixo risco para o primeiro exercício.</li>" +
+          "<li>Registre o que a IA errou e como você verificou.</li>";
+        qs("#recommendation-link").setAttribute("href", rec.link);
+        qs("#recommendation").classList.add("show");
+        qs("#recommendation-title").focus ? qs("#recommendation-title").setAttribute("tabindex", "-1") : null;
+        qs("#recommendation-title").focus();
+      });
+
+      /* Comparação de capacidades */
+      function renderCapabilityTabs() {
+        var tabs = qs("#capability-tabs");
+        tabs.innerHTML = capabilities.map(function (item, index) {
+          return '<button class="capability-tab" id="cap-tab-' + item.id + '" type="button" role="tab" aria-selected="' + (index === 0 ? "true" : "false") + '" aria-controls="capability-panel" data-capability="' + item.id + '"' + (index ? ' tabindex="-1"' : "") + '>' +
+            escapeHTML(item.name) +
+            '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m7 4 6 6-6 6"></path></svg></button>';
+        }).join("");
+
+        qsa(".capability-tab", tabs).forEach(function (tab, index) {
+          tab.addEventListener("click", function () { renderCapability(tab.getAttribute("data-capability"), false); });
+          tab.addEventListener("keydown", function (event) {
+            var direction = event.key === "ArrowDown" || event.key === "ArrowRight" ? 1 : event.key === "ArrowUp" || event.key === "ArrowLeft" ? -1 : 0;
+            if (!direction) return;
+            event.preventDefault();
+            var next = (index + direction + capabilities.length) % capabilities.length;
+            renderCapability(capabilities[next].id, false);
+            qs("#cap-tab-" + capabilities[next].id).focus();
+          });
+        });
+      }
+
+      function renderCapability(id, focusPanel) {
+        var item = capabilities.find(function (capability) { return capability.id === id; }) || capabilities[0];
+        qsa(".capability-tab").forEach(function (tab) {
+          var selected = tab.getAttribute("data-capability") === item.id;
+          tab.setAttribute("aria-selected", String(selected));
+          tab.setAttribute("tabindex", selected ? "0" : "-1");
+        });
+        var panel = qs("#capability-panel");
+        panel.setAttribute("aria-labelledby", "cap-tab-" + item.id);
+        panel.innerHTML =
+          '<p class="eyebrow">Categoria de capacidade</p><h3>' + escapeHTML(item.name) + '</h3>' +
+          '<p>Compare a utilidade com o custo de verificar. A ferramenta ideal depende do material, da atualidade e do impacto do erro.</p>' +
+          '<div class="capability-facts">' +
+            '<article class="fact"><h4>Melhor tipo de uso</h4><p>' + escapeHTML(item.best) + '</p></article>' +
+            '<article class="fact"><h4>Limitações</h4><p>' + escapeHTML(item.limits) + '</p></article>' +
+            '<article class="fact"><h4>Riscos</h4><p>' + escapeHTML(item.risks) + '</p></article>' +
+            '<article class="fact"><h4>Quando não utilizar</h4><p>' + escapeHTML(item.avoid) + '</p></article>' +
+          '</div>';
+        if (focusPanel) panel.focus();
+      }
+
+      renderCapabilityTabs();
+      renderCapability(capabilities[0].id, false);
+
+      /* Retorno ao topo */
+      var backToTop = qs("#back-to-top");
+      function toggleBackToTop() { backToTop.classList.toggle("show", window.scrollY > 700); }
+      window.addEventListener("scroll", toggleBackToTop, { passive: true });
+      backToTop.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "smooth" }); });
+      toggleBackToTop();
+    }());
+  </script>
+
+
+</body></html>
